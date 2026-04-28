@@ -25,7 +25,6 @@ export default function MovieCard({ m }: Props) {
 
       {/* Content */}
       <div className="p-4">
-      <div className="p-4">
         <h2 className="text-lg font-bold text-white tracking-tight">{m.title}</h2>
         <p className="text-sm text-gray-400">{m.releaseYear}</p>
 
@@ -43,7 +42,6 @@ export default function MovieCard({ m }: Props) {
           </Link>
         </div>
       </div>
-    </div>
     </div>
   );
 }
