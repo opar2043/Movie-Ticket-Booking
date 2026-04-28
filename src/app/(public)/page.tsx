@@ -20,6 +20,7 @@ export default async function Home() {
   } catch (error) {
     console.error("Error fetching user in Home:", error);
   }
+  
   return (
     <div className="">
       <Banner />

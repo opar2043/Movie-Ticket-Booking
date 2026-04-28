@@ -18,7 +18,7 @@ export default function AdminDashboardPage() {
 
   const fetchStats = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/stats/dashboard");
+      const res = await axios.get("https://moviebackend-eta.vercel.app/api/stats/dashboard");
       if (res.data.success) {
         setStats(res.data.data);
       }

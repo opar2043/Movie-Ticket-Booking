@@ -26,7 +26,7 @@ function CheckoutContent() {
 
   useEffect(() => {
     // Create PaymentIntent as soon as the page loads
-    axios.post("http://localhost:5000/api/payments/create-payment-intent", { amount: 1999 }) // Example amount $19.99
+    axios.post("https://moviebackend-eta.vercel.app/api/payments/create-payment-intent", { amount: 1999 }) // Example amount $19.99
       .then((res) => {
         setClientSecret(res.data.clientSecret);
       })

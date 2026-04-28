@@ -42,7 +42,7 @@ export default function CheckoutForm({ movieId, userId }: { movieId: string | nu
     } else if (paymentIntent && paymentIntent.status === "succeeded") {
       try {
         if (movieId && userId) {
-          await axios.post("http://localhost:5000/api/purchases", {
+          await axios.post("https://moviebackend-eta.vercel.app/api/purchases", {
             movieId: movieId,
             userId: userId,
             purchaseType: "BUY",

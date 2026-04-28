@@ -41,7 +41,6 @@ function LoginForm() {
         });
         return;
       }
-
       await Swal.fire({
         icon: "success",
         title: "Welcome Back!",
