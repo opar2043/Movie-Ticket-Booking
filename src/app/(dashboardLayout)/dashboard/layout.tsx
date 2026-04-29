@@ -24,7 +24,7 @@ export default async function DashboardLayout({
       },
     });
 
-    if (!user) {
+    if (!user || (!user.email && !user.id)) {
       redirect("/login");
     }
   } catch (error) {
@@ -34,7 +34,7 @@ export default async function DashboardLayout({
 
   return (
     <html lang="en" suppressHydrationWarning>
-      <body suppressHydrationWarning className="bg-[#000000] text-white min-h-screen font-sans antialiased overflow-hidden">
+      <body suppressHydrationWarning className="bg-[#000000] text-white min-h-screen font-sans antialiased">
         <DashboardSidebar user={user}>
           {children}
         </DashboardSidebar>

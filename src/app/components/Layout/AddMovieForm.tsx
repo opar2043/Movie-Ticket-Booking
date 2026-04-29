@@ -2,9 +2,11 @@
 import { moviesRoute } from "@/src/app/components/service/movie";
 import { Clapperboard, Calendar, Users, ListVideo, Link as LinkIcon, DollarSign } from "lucide-react";
 import { toast } from "sonner";
+import { useState } from "react";
+import CloudinaryUpload from "../CloudinaryUpload";
 
 export default function AddMovieForm() {
-
+  const [posterUrl, setPosterUrl] = useState("");
 
   async function createMovieAction(e : any){
      e.preventDefault();
@@ -19,7 +21,12 @@ export default function AddMovieForm() {
   .map((item: string) => item.trim())
   .filter(Boolean);
      const pricing = frm.pricing.value;
-     const posterUrl = frm.posterUrl.value;
+     
+     if (!posterUrl) {
+       toast.error("Please upload a movie poster");
+       return;
+     }
+
      const trailerUrl = frm.trailerUrl.value;
      const movie = {
       title,
@@ -36,8 +43,13 @@ export default function AddMovieForm() {
 
      try {
       const response = await moviesRoute.createMovies(movie as any);
-      console.log(response);
-      toast.success("Movie added successfully");
+      if (response.success) {
+        toast.success("Movie added successfully");
+        frm.reset();
+        setPosterUrl("");
+      } else {
+        toast.error(response.message || "Failed to add movie");
+      }
      } catch (error: any) {
       console.error("Add movie error:", error);
       toast.error(error.response?.data?.message || error.message || "Failed to add movie");
@@ -63,7 +75,7 @@ export default function AddMovieForm() {
               name="title"
               required
               placeholder="Inception" 
-              className="w-full px-3 py-2 bg-[#000000] border border-[#2B2B2B] text-white placeholder:text-white focus:outline-none focus:ring-2 focus:ring-[#E50914] focus:border-transparent rounded-sm text-lg"
+              className="w-full px-3 py-2 bg-[#000000] border border-[#2B2B2B] text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-[#E50914] focus:border-transparent rounded-sm text-lg"
             />
           </div>
 
@@ -73,7 +85,7 @@ export default function AddMovieForm() {
             <textarea 
               name="synopsis"
               placeholder="A brief description of the movie..." 
-              className="w-full bg-[#000000] border border-[#2B2B2B] text-white placeholder:text-white focus:outline-none focus:ring-2 focus:ring-[#E50914] rounded-sm p-3 min-h-[100px]"
+              className="w-full bg-[#000000] border border-[#2B2B2B] text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-[#E50914] rounded-sm p-3 min-h-[100px]"
             />
           </div>
 
@@ -86,7 +98,7 @@ export default function AddMovieForm() {
               name="releaseYear"
               type="number" 
               placeholder="2010" 
-              className="w-full px-3 py-2 bg-[#000000] border border-[#2B2B2B] text-white placeholder:text-white focus:outline-none focus:ring-2 focus:ring-[#E50914] rounded-sm" 
+              className="w-full px-3 py-2 bg-[#000000] border border-[#2B2B2B] text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-[#E50914] rounded-sm" 
             />
           </div>
 
@@ -96,7 +108,7 @@ export default function AddMovieForm() {
             </label>
             <select
               name="pricing"
-              className="w-full bg-[#000000] border border-[#2B2B2B] text-white placeholder:text-white focus:outline-none focus:ring-2 focus:ring-[#E50914] rounded-sm p-2.5 cursor-pointer hover:bg-[#2B2B2B]"
+              className="w-full bg-[#000000] border border-[#2B2B2B] text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-[#E50914] rounded-sm p-2.5 cursor-pointer hover:bg-[#2B2B2B]"
             >
               <option value="FREE">Free Tier</option>
               <option value="PREMIUM">Premium / Paid</option>
@@ -111,7 +123,7 @@ export default function AddMovieForm() {
             <input 
               name="director"
               placeholder="Christopher Nolan" 
-              className="w-full px-3 py-2 bg-[#000000] border border-[#2B2B2B] text-white placeholder:text-white focus:outline-none focus:ring-2 focus:ring-[#E50914] rounded-sm" 
+              className="w-full px-3 py-2 bg-[#000000] border border-[#2B2B2B] text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-[#E50914] rounded-sm" 
             />
           </div>
 
@@ -123,7 +135,7 @@ export default function AddMovieForm() {
             <input 
               name="cast"
               placeholder="Leonardo DiCaprio, Joseph Gordon-Levitt..." 
-              className="w-full px-3 py-2 bg-[#000000] border border-[#2B2B2B] text-white placeholder:text-white focus:outline-none focus:ring-2 focus:ring-[#E50914] rounded-sm" 
+              className="w-full px-3 py-2 bg-[#000000] border border-[#2B2B2B] text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-[#E50914] rounded-sm" 
             />
           </div>
 
@@ -136,20 +148,21 @@ export default function AddMovieForm() {
               name="streamingPlatforms"
               required
               placeholder="Netflix, Hulu, Amazon Prime (comma separated)" 
-              className="w-full px-3 py-2 bg-[#000000] border border-[#2B2B2B] text-white placeholder:text-white focus:outline-none focus:ring-2 focus:ring-[#E50914] rounded-sm" 
+              className="w-full px-3 py-2 bg-[#000000] border border-[#2B2B2B] text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-[#E50914] rounded-sm" 
             />
           </div>
 
-          {/* Poster URL */}
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-300 flex items-center gap-2">
-              <LinkIcon className="w-4 h-4 text-white" /> Poster Cover URL
-            </label>
-            <input 
-              name="posterUrl"
-              placeholder="https://example.com/poster.jpg" 
-              className="w-full px-3 py-2 bg-[#000000] border border-[#2B2B2B] text-white placeholder:text-white focus:outline-none focus:ring-2 focus:ring-[#E50914] rounded-sm" 
+          {/* Poster Upload */}
+          <div className="space-y-2 md:col-span-2">
+            <CloudinaryUpload 
+              label="Movie Poster Cover" 
+              onUploadSuccess={(url) => setPosterUrl(url)} 
             />
+            {posterUrl && (
+              <p className="text-[10px] text-gray-500 font-mono mt-1 truncate">
+                Uploaded: {posterUrl}
+              </p>
+            )}
           </div>
 
           {/* Trailer URL */}

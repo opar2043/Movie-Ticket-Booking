@@ -34,19 +34,8 @@ export default function DashboardSidebar({
   const pathname = usePathname();
   const router = useRouter();
 
-  // ✅ FIX: handle admin state properly in client component
-const [users, setUsers] = useState<any[]>([]);
-
-useEffect(() => {
-  const fetchUsers = async () => {
-    const res = await userRoute.getUsers();
-    setUsers(res?.data || []);
-  };
-  fetchUsers();
-}, []);
-
-const role = users.find((u: any) => u.email === user?.email);
-const isAdmin = role?.role === "ADMIN";
+  // ✅ FIX: handle admin state properly
+  const isAdmin = user?.role === "ADMIN";
 
   const allLinks = [
     // Admin Links
@@ -54,31 +43,31 @@ const isAdmin = role?.role === "ADMIN";
       name: "Dashboard",
       href: "/dashboard/admin",
       icon: LayoutDashboard,
-      
+      roles: ["ADMIN"]
     },
     {
       name: "Moderation",
       href: "/dashboard/admin/moderation",
       icon: ShieldCheck,
-      
+      roles: ["ADMIN"]
     },
     {
       name: "Add Movie",
       href: "/dashboard/admin/movies",
       icon: PlusCircle,
-      
+      roles: ["ADMIN"]
     },
     {
       name: "All Movies",
       href: "/dashboard/admin/all-movies",
       icon: Film,
-      
+      roles: ["ADMIN"]
     },
     {
       name: "Users",
       href: "/dashboard/admin/users",
       icon: User,
-     
+      roles: ["ADMIN"]
     },
 
     // User Links
@@ -86,16 +75,18 @@ const isAdmin = role?.role === "ADMIN";
       name: "My Reviews",
       href: "/dashboard/user/reviews",
       icon: MessageSquareText,
+      roles: ["USER", "ADMIN"]
     },
     {
       name: "Favorites",
       href: "/dashboard/user/favorites",
       icon: Heart,
+      roles: ["USER", "ADMIN"]
     },
   ];
 
   const sidebarLinks = allLinks.filter(
-    (link) => !isAdmin
+    (link) => link.roles.includes(user?.role || "USER")
   );
 
   const handleLogout = async () => {
@@ -121,7 +112,7 @@ const isAdmin = role?.role === "ADMIN";
               className="flex items-center gap-2 text-xl font-bold tracking-tight text-white hover:text-[#E50914] transition-colors"
             >
               <Film className="w-6 h-6 text-[#E50914]" />
-              CineVerse {!isAdmin ? "Admin" : "User"}
+              CineVerse {isAdmin ? "Admin" : "User"}
             </Link>
           </div>
 

@@ -50,59 +50,59 @@
 
 :root {
   --background: #000000;
-  --foreground: #141414;
+  --foreground: #ffffff;
   --card: #141414;
-  --card-foreground: #141414;
+  --card-foreground: #ffffff;
   --popover: #141414;
-  --popover-foreground: #141414;
+  --popover-foreground: #ffffff;
   --primary: #E50914;
-  --primary-foreground: #141414;
+  --primary-foreground: #ffffff;
   --secondary: #2B2B2B;
-  --secondary-foreground: #141414;
+  --secondary-foreground: #ffffff;
   --muted: #2B2B2B;
   --muted-foreground: #a3a3a3;
   --accent: #E50914;
-  --accent-foreground: #141414;
+  --accent-foreground: #ffffff;
   --destructive: #7f1d1d;
   --border: #2B2B2B;
   --input: #2B2B2B;
   --ring: #E50914;
   --radius: 0.25rem;
   --sidebar: #141414;
-  --sidebar-foreground: #141414;
+  --sidebar-foreground: #ffffff;
   --sidebar-primary: #E50914;
-  --sidebar-primary-foreground: #141414;
+  --sidebar-primary-foreground: #ffffff;
   --sidebar-accent: #2B2B2B;
-  --sidebar-accent-foreground: #141414;
+  --sidebar-accent-foreground: #ffffff;
   --sidebar-border: #2B2B2B;
   --sidebar-ring: #E50914;
 }
 
 .dark {
   --background: #000000;
-  --foreground: #141414;
+  --foreground: #ffffff;
   --card: #141414;
-  --card-foreground: #141414;
+  --card-foreground: #ffffff;
   --popover: #141414;
-  --popover-foreground: #141414;
+  --popover-foreground: #ffffff;
   --primary: #E50914;
-  --primary-foreground: #141414;
+  --primary-foreground: #ffffff;
   --secondary: #2B2B2B;
-  --secondary-foreground: #141414;
+  --secondary-foreground: #ffffff;
   --muted: #2B2B2B;
   --muted-foreground: #a3a3a3;
   --accent: #E50914;
-  --accent-foreground: #141414;
+  --accent-foreground: #ffffff;
   --destructive: #7f1d1d;
   --border: #2B2B2B;
   --input: #2B2B2B;
   --ring: #E50914;
   --sidebar: #141414;
-  --sidebar-foreground: #141414;
+  --sidebar-foreground: #ffffff;
   --sidebar-primary: #E50914;
-  --sidebar-primary-foreground: #141414;
+  --sidebar-primary-foreground: #ffffff;
   --sidebar-accent: #2B2B2B;
-  --sidebar-accent-foreground: #141414;
+  --sidebar-accent-foreground: #ffffff;
   --sidebar-border: #2B2B2B;
   --sidebar-ring: #E50914;
 }

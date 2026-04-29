@@ -37,7 +37,7 @@ function LoginForm() {
           title: "Sign In Failed",
           text: error.message || "Failed to sign in",
           background: "#141414",
-          color: "#141414"
+          color: "#ffffff"
         });
         return;
       }
@@ -46,10 +46,11 @@ function LoginForm() {
         title: "Welcome Back!",
         text: "User Login successfully",
         background: "#141414",
-        color: "#141414",
+        color: "#ffffff",
         timer: 1500,
         showConfirmButton: false
       });
+      router.refresh();
       router.push(redirectParams);
      } catch (error : any) {
       console.error("Login error:", error);
@@ -58,7 +59,7 @@ function LoginForm() {
         title: "Error",
         text: error.response?.data?.message || error.message || "Something went wrong",
         background: "#141414",
-        color: "#141414"
+        color: "#ffffff"
       });
      } 
   }

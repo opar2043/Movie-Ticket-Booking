@@ -4,20 +4,23 @@ import { Clapperboard, Calendar, Users, ListVideo, Link as LinkIcon, DollarSign,
 import { toast } from "sonner";
 import { useEffect, useState } from "react";
 import { MOVIE } from "../types/movies.type";
+import CloudinaryUpload from "../CloudinaryUpload";
 
 export default function EditMovieForm({ id }: { id: string }) {
   const [movieData, setMovieData] = useState<MOVIE | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [posterUrl, setPosterUrl] = useState("");
 
   useEffect(() => {
     const fetchMovie = async () => {
       try {
         setIsLoading(true);
         const response = await moviesRoute.getSingleMovies(id);
-        // Assuming the structure is { success: true, data: { ...movie } } or directly the movie
-        // Based on service/movie.ts: const res = data.data; return res
-        // If it's standard response, it might be response.data
-        setMovieData(response.data || response);
+        const data = response.data || response;
+        setMovieData(data);
+        if (data.posterUrl) {
+          setPosterUrl(data.posterUrl);
+        }
       } catch (error: any) {
         console.error("Failed to fetch movie:", error);
         toast.error("Failed to load movie details");
@@ -44,7 +47,6 @@ export default function EditMovieForm({ id }: { id: string }) {
       .map((item: string) => item.trim())
       .filter(Boolean);
     const pricing = frm.pricing.value;
-    const posterUrl = frm.posterUrl.value;
     const trailerUrl = frm.trailerUrl.value;
 
     const payload = {
@@ -186,16 +188,22 @@ export default function EditMovieForm({ id }: { id: string }) {
             />
           </div>
 
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-300 flex items-center gap-2">
-              <LinkIcon className="w-4 h-4 text-gray-500" /> Poster Cover URL
-            </label>
-            <input
-              name="posterUrl"
-              defaultValue={movieData.posterUrl || ""}
-              placeholder="https://example.com/poster.jpg"
-              className="w-full px-3 py-2 bg-[#000000] border border-[#2B2B2B] text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-[#E50914] rounded-sm"
+          {/* Poster Upload */}
+          <div className="space-y-2 md:col-span-2">
+            <CloudinaryUpload 
+              label="Movie Poster Cover" 
+              onUploadSuccess={(url) => setPosterUrl(url)} 
             />
+            {posterUrl && (
+              <div className="mt-2">
+                <p className="text-[10px] text-gray-500 font-mono mb-2 truncate">
+                  Current: {posterUrl}
+                </p>
+                <div className="w-24 h-36 rounded border border-[#2B2B2B] overflow-hidden">
+                   <img src={posterUrl} alt="Poster preview" className="w-full h-full object-cover" />
+                </div>
+              </div>
+            )}
           </div>
 
           <div className="space-y-2">

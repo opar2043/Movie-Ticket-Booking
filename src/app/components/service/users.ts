@@ -36,7 +36,7 @@ const deleteUser = async (id: string) => {
 const getMe = async (options = {}) => {
   try {
     const res = await api.get("/me", options);
-    return res.data;
+    return res.data?.data || res.data;
   } catch (error) {
     // console.error("Error fetching user data:", error);
     return null;
