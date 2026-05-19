@@ -1,25 +1,16 @@
-import type { Metadata } from "next";
-import "../globals.css";
 import Navbar from "@/src/app/components/Layout/Navbar";
 import Footer from "@/src/app/components/Layout/Footer";
 
-export const metadata: Metadata = {
-  title: "Movies OK",
-  description: "Buy Your Ticket",
-};
-
-export default function RootLayout({
+export default function PublicLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className="min-h-full flex flex-col" suppressHydrationWarning>
-        <Navbar />
-        {children}
-        <Footer />
-      </body>
-    </html>
+    <div className="min-h-screen flex flex-col">
+      <Navbar />
+      <div className="flex-1">{children}</div>
+      <Footer />
+    </div>
   );
 }

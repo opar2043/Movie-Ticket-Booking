@@ -2,42 +2,41 @@
 
 import React, { useEffect, useState } from "react";
 import { reviewRoute } from "@/src/app/components/service/review";
-import { useSession } from "@/src/lib/auth-client";
+import { useAuth } from "@/src/app/(auth)/useAuth";
 import { Trash2, Edit3, MessageSquare, Star, Clock, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
 import { ReviewType } from "@/src/app/components/types/reviews.type";
 
 export default function UserReviewsPage() {
-  const { data: session } = useSession();
+  const { user } = useAuth();
   const [reviews, setReviews] = useState<ReviewType[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const fetchUserReviews = async () => {
-    if (!session?.user?.id) return;
-    setLoading(true);
-    try {
-      const res = await reviewRoute.getReview(false);
-      const data = res?.data || res || [];
-      // Filter by current user ID (We need to ensure the API returns user reviews for non-admins too)
-      // Actually, for user dashboard, we might need a specific getMyReviews endpoint 
-      // but let's filter what we have for now.
-      setReviews(data.filter((r: ReviewType) => r.userId === session.user.id));
-    } catch (error) {
-      console.error("Fetch Error:", error);
-      toast.error("Failed to load your reviews");
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
-    fetchUserReviews();
-  }, [session]);
+    const fetchReviews = async () => {
+      if (!user?.id) {
+        setLoading(false);
+        return;
+      }
+      setLoading(true);
+      try {
+        const res = await reviewRoute.getReview(false);
+        const data = res?.data || res || [];
+        setReviews(data.filter((r: ReviewType) => r.userId === user.id));
+      } catch (error) {
+        console.error("Fetch Error:", error);
+        toast.error("Failed to load your reviews");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchReviews();
+  }, [user?.id]);
 
   const handleDelete = async (id: string) => {
     if (!confirm("Are you sure you want to delete this review?")) return;
     try {
-      await reviewRoute.deleteReview(id, session?.user?.id);
+      await reviewRoute.deleteReview(id, user?.id);
       toast.success("Review deleted successfully");
       setReviews(prev => prev.filter(r => r.id !== id));
     } catch (error) {
@@ -77,7 +76,7 @@ export default function UserReviewsPage() {
                     <span className="text-yellow-500 font-black">{review.rating}</span>
                   </div>
                   <span className={`px-3 py-1 rounded-sm text-[10px] font-black uppercase tracking-widest ${
-                    review.status === 'APPROVED' ? 'bg-green-900/40 text-green-500 border border-green-800' : 
+                    review.status === 'APPROVED' ? 'bg-green-900/40 text-green-500 border border-green-800' :
                     review.status === 'REJECTED' ? 'bg-red-900/40 text-red-500 border border-red-800' : 'bg-yellow-900/40 text-yellow-500 border border-yellow-800'
                   }`}>
                     {review.status}
@@ -105,14 +104,14 @@ export default function UserReviewsPage() {
 
                 {review.status === "PENDING" && (
                   <div className="flex items-center gap-2">
-                    <button 
+                    <button
                       onClick={() => toast.info("Editing coming soon!")}
                       className="p-2 text-gray-400 hover:text-[#E50914] hover:bg-black rounded-sm transition-all"
                       title="Edit Review"
                     >
                       <Edit3 className="w-5 h-5" />
                     </button>
-                    <button 
+                    <button
                       onClick={() => handleDelete(review.id)}
                       className="p-2 text-gray-400 hover:text-red-500 hover:bg-black rounded-sm transition-all"
                       title="Delete Review"

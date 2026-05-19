@@ -1,46 +1,30 @@
 'use client'
-import React from "react";
+import React, { Suspense } from "react";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
-import { toast } from "sonner";
-import { authClient } from "@/src/lib/auth-client";
+import { useRouter } from "next/navigation";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import auth from "@/src/app/(auth)/firebase.config";
+import {
+  fetchDbUserByEmail,
+  redirectPathForRole,
+} from "@/src/app/(auth)/useAuth";
 import Swal from "sweetalert2";
-import { Suspense } from "react";
 
 function LoginForm() {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const redirectParams = searchParams.get("redirect") || "/dashboard/admin";
 
-  async function loginAction(e : any){
+  async function loginAction(e: any) {
     e.preventDefault();
 
     const email = e.target.email.value;
     const password = e.target.password.value;
 
-    const users ={
-      email,
-      password
-    }
-     console.log(users)
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
 
-     try {
-      const { data, error } = await authClient.signIn.email({
-        email: users.email,
-        password: users.password,
-        callbackURL: "/login"
-      });
+      const dbUser = await fetchDbUserByEmail(email);
+      const target = redirectPathForRole(dbUser?.role);
 
-      if (error) {
-        Swal.fire({
-          icon: "error",
-          title: "Sign In Failed",
-          text: error.message || "Failed to sign in",
-          background: "#141414",
-          color: "#ffffff"
-        });
-        return;
-      }
       await Swal.fire({
         icon: "success",
         title: "Welcome Back!",
@@ -48,20 +32,21 @@ function LoginForm() {
         background: "#141414",
         color: "#ffffff",
         timer: 1500,
-        showConfirmButton: false
+        showConfirmButton: false,
       });
+
+      router.push(target);
       router.refresh();
-      router.push(redirectParams);
-     } catch (error : any) {
+    } catch (error: any) {
       console.error("Login error:", error);
       Swal.fire({
         icon: "error",
         title: "Error",
-        text: error.response?.data?.message || error.message || "Something went wrong",
+        text: error?.message || "Something went wrong",
         background: "#141414",
-        color: "#ffffff"
+        color: "#ffffff",
       });
-     } 
+    }
   }
 
   return (
@@ -73,35 +58,30 @@ function LoginForm() {
         </div>
 
         <form onSubmit={loginAction} className="space-y-5">
-          {/* Email Field */}
           <div className="space-y-2">
             <label className="text-sm font-medium text-gray-300">Email Address</label>
-            <input 
+            <input
               name="email"
-              type="email" 
-              required
-              placeholder="name@example.com" 
+              type="text"
+              placeholder="name@example.com"
               className="w-full px-3 py-2 bg-[#2B2B2B] border border-[#2B2B2B] text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-[#E50914] focus:border-transparent rounded-sm"
             />
           </div>
 
-          {/* Password Field */}
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <label className="text-sm font-medium text-gray-300">Password</label>
             </div>
-            <input 
+            <input
               name="password"
-              type="password" 
-              required
-              placeholder="••••••••" 
+              type="password"
+              placeholder="••••••••"
               className="w-full px-3 py-2 bg-[#2B2B2B] border border-[#2B2B2B] text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-[#E50914] focus:border-transparent rounded-sm"
             />
           </div>
 
-          {/* Submit Button */}
-          <button 
-            type="submit" 
+          <button
+            type="submit"
             className="w-full bg-[#E50914] hover:bg-red-700 text-white font-medium py-2.5 rounded-sm transition-colors flex justify-center items-center mt-6"
           >
             Sign In
@@ -124,6 +104,5 @@ export default function LoginPage() {
     <Suspense fallback={<div>Loading login...</div>}>
       <LoginForm />
     </Suspense>
-  )
+  );
 }
-

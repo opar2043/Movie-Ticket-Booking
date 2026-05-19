@@ -5,7 +5,7 @@ import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
 import CheckoutForm from "./CheckoutForm";
 import axios from "axios";
-import { authClient } from "@/src/lib/auth-client";
+import { useSession } from "@/src/app/(auth)/useAuth";
 import { useRouter, useSearchParams } from "next/navigation";
 
 // Make sure to call loadStripe outside of a component's render to avoid recreating the Stripe object on every render.
@@ -13,7 +13,7 @@ const stripePromise = loadStripe('pk_test_51QfDLMIXauIQhi9zpYyko394OCzT9oOQKPvLF
 
 function CheckoutContent() {
   const [clientSecret, setClientSecret] = useState("");
-  const { data: session, isPending } = authClient.useSession();
+  const { data: session, isPending } = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
   const movieId = searchParams.get("movie");

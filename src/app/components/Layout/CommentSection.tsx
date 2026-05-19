@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { commentRoute } from "../service/comment";
-import { useSession } from "@/src/lib/auth-client";
+import { useSession } from "@/src/app/(auth)/useAuth";
 import { toast } from "sonner";
 import { MessageSquare, Send, User } from "lucide-react";
 import { CommentType } from "../types/comments.type";

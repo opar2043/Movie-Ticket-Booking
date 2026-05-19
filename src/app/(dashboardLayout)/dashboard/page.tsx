@@ -1,36 +1,28 @@
-import { redirect } from "next/navigation";
-import { cookies } from "next/headers";
-import { userRoute } from "../../components/service/users";
+"use client";
 
-export default async function DashboardRedirect() {
-  const cookieStore = await cookies();
-  const cookieString = cookieStore.toString();
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import {
+  useAuth,
+  redirectPathForRole,
+} from "@/src/app/(auth)/useAuth";
 
-  try {
-    const user = await userRoute.getMe({
-      headers: {
-        Cookie: cookieString,
-      },
-    });
+export default function DashboardIndexPage() {
+  const router = useRouter();
+  const { user, isPending } = useAuth();
 
-    if (!user || !user.email) {
-      redirect("/login");
+  useEffect(() => {
+    if (isPending) return;
+    if (!user) {
+      router.replace("/login");
+      return;
     }
+    router.replace(redirectPathForRole(user.role));
+  }, [user, isPending, router]);
 
-    const users = await userRoute.getUsers({
-      headers: {
-        Cookie: cookieString,
-      },
-    });
-    
-    const loginUser = users.find((u: any) => u.email === user.email);
-    
-    if (loginUser?.role === "ADMIN") {
-      redirect("/dashboard/admin");
-    } else {
-      redirect("/dashboard/user/favorites");
-    }
-  } catch (error) {
-    redirect("/dashboard/user/favorites");
-  }
+  return (
+    <div className="min-h-[40vh] flex items-center justify-center text-gray-400">
+      Redirecting to your dashboard...
+    </div>
+  );
 }

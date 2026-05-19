@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { reviewRoute } from "../service/review";
 import { toast } from "sonner";
 import { Star, X, LogIn } from "lucide-react";
-import { useSession } from "@/src/lib/auth-client";
+import { useSession } from "@/src/app/(auth)/useAuth";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 

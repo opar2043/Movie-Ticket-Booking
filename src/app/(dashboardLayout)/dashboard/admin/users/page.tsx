@@ -2,6 +2,7 @@ import React from "react";
 import { User as UserIcon, Calendar } from "lucide-react";
 import { userRoute } from "@/src/app/components/service/users";
 import UserActions from "@/src/app/components/Layout/UserActions";
+import { UserRole } from "@/src/app/(auth)/useAuth";
 
 export default async function UsersPage() {
   const responseData = await userRoute.getUsers();
@@ -64,16 +65,16 @@ export default async function UsersPage() {
                     </td>
                     <td className="px-6 py-4">
                       <span className={`px-2.5 py-1 rounded-sm text-[10px] font-black uppercase tracking-widest ${
-                        user.role === 'ADMIN' ? 'bg-[#E50914]/20 text-[#E50914] border border-[#E50914]/30' : 'bg-gray-800 text-gray-300 border border-gray-700'
+                        user.role === UserRole.ADMIN ? 'bg-[#E50914]/20 text-[#E50914] border border-[#E50914]/30' : 'bg-gray-800 text-gray-300 border border-gray-700'
                       }`}>
-                        {user.role || 'USER'}
+                        {user.role || UserRole.USER}
                       </span>
                     </td>
                     <td className="px-6 py-4 text-right">
-                      <UserActions 
-                        userId={user.id} 
-                        userName={user.name || "Unknown"} 
-                        currentRole={user.role || "USER"} 
+                      <UserActions
+                        userId={user.id}
+                        userName={user.name || "Unknown"}
+                        currentRole={user.role || UserRole.USER}
                       />
                     </td>
                   </tr>

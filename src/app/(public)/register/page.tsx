@@ -3,66 +3,49 @@ import React from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { authClient } from "@/src/lib/auth-client";
+import {
+  createUserWithEmailAndPassword,
+  updateProfile,
+} from "firebase/auth";
+import auth from "@/src/app/(auth)/firebase.config";
+import {
+  fetchDbUserByEmail,
+  redirectPathForRole,
+  UserRole,
+} from "@/src/app/(auth)/useAuth";
+import api from "@/src/app/components/service/api";
 
 export default function RegisterPage() {
-  
-  // async function registerAction(formData: FormData) {
-  //   "use server";
-  //   const name = formData.get("name") as string;
-  //   const email = formData.get("email") as string;
-  //   const password = formData.get("password") as string;
-    
-  //   try {
-  //     // Direct pass-through to custom backend logic
-  //     await api.post("/users", { name, email, password });
-  //   } catch (error) {
-  //      console.error("Failed to register", error);
-  //      // In a production app you'd return the error to the form state
-  //   }
-    
-  //   // Redirect to login upon successful creation
-  //   redirect("/login");
-  // }
-
   const router = useRouter();
 
-  async function registerAction(e : any){
+  async function registerAction(e: any) {
     e.preventDefault();
 
     const name = e.target.name.value;
     const email = e.target.email.value;
     const password = e.target.password.value;
 
-    const users ={
-      name,
-      email,
-      password
-    }
-     console.log(users)
+    try {
+      const cred = await createUserWithEmailAndPassword(auth, email, password);
 
-     try {
-      // const res = await api.post("/users", users);
-      // console.log(res.data);
-
-      const { data, error } = await authClient.signUp.email({
-        email: users.email,
-        password: users.password,
-        name: users.name,
-        callbackURL: "/login"
-      });
-
-      if (error) {
-        toast.error(error.message || "Failed to register");
-        return;
+      if (cred.user && name) {
+        await updateProfile(cred.user, { displayName: name });
       }
 
+      await api.post("/users", { name, email, role: UserRole.USER });
+
+      const dbUser = await fetchDbUserByEmail(email);
+      const target = redirectPathForRole(dbUser?.role);
+
       toast.success("User registered successfully");
-      router.push("/login");
-     } catch (error : any) {
+      router.push(target);
+      router.refresh();
+    } catch (error: any) {
       console.error("Register error:", error);
-      toast.error(error.response?.data?.message || error.message || "Something went wrong");
-     } 
+      toast.error(
+        error?.response?.data?.message || error?.message || "Something went wrong"
+      );
+    }
   }
 
   return (
@@ -74,44 +57,37 @@ export default function RegisterPage() {
         </div>
 
         <form onSubmit={registerAction} className="space-y-5">
-          {/* Name Field */}
           <div className="space-y-2">
             <label className="text-sm font-medium text-gray-300">Name</label>
-            <input 
+            <input
               name="name"
-              required
-              placeholder="John Doe" 
+              placeholder="John Doe"
               className="w-full px-3 py-2 bg-[#000000] border border-[#2B2B2B] text-white placeholder:text-gray-600 focus:outline-none focus:ring-2 focus:ring-[#E50914] focus:border-transparent rounded-sm"
             />
           </div>
 
-          {/* Email Field */}
           <div className="space-y-2">
             <label className="text-sm font-medium text-gray-300">Email Address</label>
-            <input 
+            <input
               name="email"
-              type="email" 
-              required
-              placeholder="name@example.com" 
+              type="text"
+              placeholder="name@example.com"
               className="w-full px-3 py-2 bg-[#000000] border border-[#2B2B2B] text-white placeholder:text-gray-600 focus:outline-none focus:ring-2 focus:ring-[#E50914] focus:border-transparent rounded-sm"
             />
           </div>
 
-          {/* Password Field */}
           <div className="space-y-2">
             <label className="text-sm font-medium text-gray-300">Password</label>
-            <input 
+            <input
               name="password"
-              type="password" 
-              required
-              placeholder="••••••••" 
+              type="password"
+              placeholder="••••••••"
               className="w-full px-3 py-2 bg-[#000000] border border-[#2B2B2B] text-white placeholder:text-gray-600 focus:outline-none focus:ring-2 focus:ring-[#E50914] focus:border-transparent rounded-sm"
             />
           </div>
 
-          {/* Submit Button */}
-          <button 
-            type="submit" 
+          <button
+            type="submit"
             className="w-full bg-[#E50914] hover:bg-red-700 text-white font-medium py-2.5 rounded-sm transition-colors flex justify-center items-center mt-6"
           >
             Sign Up
@@ -128,4 +104,3 @@ export default function RegisterPage() {
     </div>
   );
 }
-

@@ -14,15 +14,14 @@ import {
   MessageSquareText,
   Heart,
 } from "lucide-react";
-import { signOut } from "@/src/lib/auth-client";
+import { signOut, UserRole } from "@/src/app/(auth)/useAuth";
 import { toast } from "sonner";
-import { userRoute } from "../../components/service/users";
 
 interface DashboardSidebarProps {
   user: {
-    name?: string;
-    email?: string;
-    role?: string;
+    name?: string | null;
+    email?: string | null;
+    role: UserRole;
   };
   children: React.ReactNode;
 }
@@ -34,59 +33,55 @@ export default function DashboardSidebar({
   const pathname = usePathname();
   const router = useRouter();
 
-  // ✅ FIX: handle admin state properly
-  const isAdmin = user?.role === "ADMIN";
+  const isAdmin = user?.role === UserRole.ADMIN;
 
   const allLinks = [
-    // Admin Links
     {
       name: "Dashboard",
       href: "/dashboard/admin",
       icon: LayoutDashboard,
-      roles: ["ADMIN"]
+      roles: [UserRole.ADMIN],
     },
     {
       name: "Moderation",
       href: "/dashboard/admin/moderation",
       icon: ShieldCheck,
-      roles: ["ADMIN"]
+      roles: [UserRole.ADMIN],
     },
     {
       name: "Add Movie",
       href: "/dashboard/admin/movies",
       icon: PlusCircle,
-      roles: ["ADMIN"]
+      roles: [UserRole.ADMIN],
     },
     {
       name: "All Movies",
       href: "/dashboard/admin/all-movies",
       icon: Film,
-      roles: ["ADMIN"]
+      roles: [UserRole.ADMIN],
     },
     {
       name: "Users",
       href: "/dashboard/admin/users",
       icon: User,
-      roles: ["ADMIN"]
+      roles: [UserRole.ADMIN],
     },
-
-    // User Links
     {
       name: "My Reviews",
       href: "/dashboard/user/reviews",
       icon: MessageSquareText,
-      roles: ["USER", "ADMIN"]
+      roles: [UserRole.USER, UserRole.ADMIN],
     },
     {
       name: "Favorites",
       href: "/dashboard/user/favorites",
       icon: Heart,
-      roles: ["USER", "ADMIN"]
+      roles: [UserRole.USER, UserRole.ADMIN],
     },
   ];
 
-  const sidebarLinks = allLinks.filter(
-    (link) => link.roles.includes(user?.role || "USER")
+  const sidebarLinks = allLinks.filter((link) =>
+    link.roles.includes(user?.role ?? UserRole.USER)
   );
 
   const handleLogout = async () => {

@@ -4,11 +4,17 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { Search, User, Menu, X, ChevronDown, Film, LogOut, LayoutDashboard } from "lucide-react";
 import { cn } from "@/src/app/components/lib/utils";
-import { useSession, signOut } from "@/src/lib/auth-client";
+import { useAuth, signOut } from "@/src/app/(auth)/useAuth";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
-const navLinks = [
+type NavLink = {
+  label: string;
+  href: string;
+  children?: { label: string; href: string }[];
+};
+
+const navLinks: NavLink[] = [
   {
     label: "Home",
     href: "/",
@@ -18,14 +24,6 @@ const navLinks = [
     href: "/movies",
   },
   {
-    label: "Ticket",
-    href: "/ticket",
-    children: [
-      { label: "Buy Ticket", href: "/ticket/buy" },
-      { label: "My Tickets", href: "/ticket/my-tickets" },
-    ],
-  },
-  {
     label: "About",
     href: "/about",
   },
@@ -33,7 +31,7 @@ const navLinks = [
 ];
 
 export default function Navbar() {
-  const { data: session, isPending } = useSession();
+  const { user, isPending } = useAuth();
   const router = useRouter();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -48,19 +46,21 @@ export default function Navbar() {
   }, []);
 
   const handleLogout = async () => {
+    const toastId = toast.loading("Logging out...");
     try {
-      await signOut({
-        fetchOptions: {
-          onSuccess: () => {
-            toast.success("Logged out successfully");
-            router.push("/login");
-          },
-        },
-      });
+      await signOut();
+      toast.success("Logged out successfully", { id: toastId });
+      router.push("/login");
+      router.refresh();
     } catch (error) {
-      toast.error("Failed to logout");
+      toast.error("Failed to logout", { id: toastId });
     }
   };
+
+  // Safe helper values
+  const displayName = user?.name ?? user?.email?.split("@")[0] ?? "User";
+  const avatarInitial = (user?.name?.[0] ?? user?.email?.[0] ?? "U").toUpperCase();
+  const firstName = displayName.split(" ")[0];
 
   return (
     <>
@@ -141,27 +141,27 @@ export default function Navbar() {
 
               {isPending ? (
                 <div className="w-9 h-9 rounded-full bg-slate-800 animate-pulse mx-2" />
-              ) : session ? (
+              ) : user ? (
                 <div className="relative">
                   <button
                     onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
                     className="flex items-center gap-2 p-1 pl-3 pr-2 rounded-sm bg-slate-800 hover:bg-slate-700 transition-colors border border-slate-700 group"
                   >
                     <span className="text-xs font-semibold text-slate-300 group-hover:text-white transition-colors max-w-[80px] truncate">
-                      {session.user.name.split(' ')[0]}
+                      {firstName}
                     </span>
                     <div className="w-7 h-7 rounded-sm bg-[#E50914] flex items-center justify-center text-white text-[10px] font-bold">
-                      {session.user.name[0].toUpperCase()}
+                      {avatarInitial}
                     </div>
                   </button>
 
                   {isUserMenuOpen && (
                     <div className="absolute top-full right-0 mt-2 w-56 bg-[#141414] rounded-sm shadow-2xl border border-[#2B2B2B] py-2 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200 text-white">
                       <div className="px-4 py-3 border-b border-[#2B2B2B] bg-[#000000]">
-                        <p className="text-sm font-bold text-white truncate">{session.user.name}</p>
-                        <p className="text-[11px] text-gray-400 truncate">{session.user.email}</p>
+                        <p className="text-sm font-bold text-white truncate">{displayName}</p>
+                        <p className="text-[11px] text-gray-400 truncate">{user?.email ?? ""}</p>
                       </div>
-                      
+
                       <Link
                         href="/dashboard"
                         onClick={() => setIsUserMenuOpen(false)}
@@ -170,7 +170,7 @@ export default function Navbar() {
                         <LayoutDashboard className="w-4 h-4 text-gray-400" />
                         Dashboard
                       </Link>
-                      
+
                       <button
                         onClick={() => {
                           setIsUserMenuOpen(false);
@@ -260,8 +260,8 @@ export default function Navbar() {
                   )}
                 </li>
               ))}
-              
-              {session && (
+
+              {user && (
                 <li className="mt-4 pt-4 border-t border-slate-800">
                   <button
                     onClick={handleLogout}

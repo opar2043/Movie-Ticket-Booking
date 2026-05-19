@@ -8,24 +8,26 @@ import { MdOutlineRateReview as ReviewIcon } from "react-icons/md";
 import { IoMdHome as HomeIcon } from "react-icons/io";
 import { GiShoppingBag as AllOrdersIcon } from "react-icons/gi";
 import { MdInventory as StockIcon } from "react-icons/md";
-
-// ✅ Match Prisma Role
-type Role = "ADMIN" | "USER";
+import { useAuth, UserRole } from "@/src/app/(auth)/useAuth";
 
 const DashboardNavigation = () => {
-  // 🔥 Replace with real session later
-  const user = { role: "ADMIN" as Role };
+  
+  const { user, isPending } = useAuth();
+
+  if (isPending || !user) {
+    return (
+      <div className="text-sm text-gray-500 px-3 py-2">Loading menu...</div>
+    );
+  }
 
   return (
     <div className="space-y-4">
-      {user.role === "USER" && <UserNavigation />}
-      {user.role === "ADMIN" && <AdminNavigation />}
+      {user.role === UserRole.USER && <UserNavigation />}
+      {user.role === UserRole.ADMIN && <AdminNavigation />}
     </div>
   );
 };
 
-
-// ✅ USER (Customer)
 const UserNavigation = () => (
   <>
     <Navigator route="/" Icon={HomeIcon} label="Home" />
@@ -34,7 +36,6 @@ const UserNavigation = () => (
     <Navigator route="/dashboard/user/profile" Icon={ProfileIcon} label="Profile" />
   </>
 );
-
 
 const AdminNavigation = () => (
   <>
@@ -47,8 +48,6 @@ const AdminNavigation = () => (
   </>
 );
 
-
-// ✅ Reusable Navigator
 const Navigator = ({
   route,
   Icon,

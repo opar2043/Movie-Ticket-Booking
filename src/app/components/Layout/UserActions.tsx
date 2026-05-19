@@ -5,14 +5,16 @@ import { Trash2, UserCog, Loader2, ShieldUser, User as UserIcon } from "lucide-r
 import { userRoute } from "@/src/app/components/service/users";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { UserRole, normalizeRole } from "@/src/app/(auth)/useAuth";
 
 interface UserActionsProps {
   userId: string;
   userName: string;
-  currentRole: string;
+  currentRole: string | UserRole;
 }
 
-export default function UserActions({ userId, userName, currentRole }: UserActionsProps) {
+export default function UserActions({ userId, userName, currentRole: rawRole }: UserActionsProps) {
+  const currentRole = normalizeRole(rawRole);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isChangingRole, setIsChangingRole] = useState(false);
   const router = useRouter();
@@ -36,7 +38,7 @@ export default function UserActions({ userId, userName, currentRole }: UserActio
   };
 
   const handleRoleToggle = async () => {
-    const newRole = currentRole === "ADMIN" ? "USER" : "ADMIN";
+    const newRole = currentRole === UserRole.ADMIN ? UserRole.USER : UserRole.ADMIN;
     
     setIsChangingRole(true);
     const toastId = toast.loading(`Changing role for "${userName}" to ${newRole}...`);
@@ -60,15 +62,15 @@ export default function UserActions({ userId, userName, currentRole }: UserActio
         onClick={handleRoleToggle}
         disabled={isChangingRole}
         className={`p-2 rounded-md transition-all flex items-center gap-2 text-xs font-bold uppercase tracking-wider ${
-          currentRole === "ADMIN" 
+          currentRole === UserRole.ADMIN 
             ? "text-purple-600 bg-purple-50 hover:bg-purple-100" 
             : "text-blue-600 bg-blue-50 hover:bg-blue-100"
         } disabled:opacity-50`}
-        title={`Change role to ${currentRole === "ADMIN" ? "USER" : "ADMIN"}`}
+        title={`Change role to ${currentRole === UserRole.ADMIN ? "USER" : "ADMIN"}`}
       >
         {isChangingRole ? (
           <Loader2 className="w-4 h-4 animate-spin" />
-        ) : currentRole === "ADMIN" ? (
+        ) : currentRole === UserRole.ADMIN ? (
           <>
             <ShieldUser className="w-4 h-4" />
             Admin
