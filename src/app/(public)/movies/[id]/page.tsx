@@ -31,7 +31,7 @@ export default async function ViewMovie({
   return (
     <main className="min-h-screen bg-[#121315] pb-24">
       {/* CINEMATIC HERO */}
-      <section className="relative pt-2 pb-12 bg-red-700">
+      <section className="relative pt-2 pb-12 ">
         <div className="max-w-[1400px] mx-auto px-5 sm:px-8">
           <div className="relative rounded-[2rem] overflow-hidden border border-white/8 luxury-shadow">
             {/* Backdrop */}
