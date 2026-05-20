@@ -1,8 +1,9 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
-import { Film } from "lucide-react";
+import { motion } from "framer-motion";
+import { Mail, ArrowUpRight, MapPin, Phone, Send } from "lucide-react";
 import {
   FaFacebookF,
   FaTwitter,
@@ -10,55 +11,211 @@ import {
   FaYoutube,
   FaPinterestP,
 } from "react-icons/fa";
+import { toast } from "sonner";
 
-const movieLinks = [
-  { label: "Action",    href: "/movies/action" },
-  { label: "Adventure", href: "/movies/adventure" },
-  { label: "Animation", href: "/movies/animation" },
-  { label: "Comedy",    href: "/movies/comedy" },
-  { label: "Crime",     href: "/movies/crime" },
+const filmLinks = [
+  { label: "Now Showing", href: "/movies" },
+  { label: "Coming Soon", href: "/movies" },
+  { label: "Editorial Picks", href: "/movies" },
+  { label: "Director Series", href: "/movies" },
 ];
 
-const quickLinks = [
-  { label: "About",      href: "/about" },
-  { label: "My Account", href: "/account" },
-  { label: "News",       href: "/news" },
+const studioLinks = [
+  { label: "About Studio", href: "/about" },
+  { label: "Contact", href: "/contact" },
+  { label: "Press", href: "/contact" },
+  { label: "Careers", href: "/contact" },
 ];
 
-const socialLinks = [
-  { icon: <FaFacebookF className="w-3.5 h-3.5" />,  href: "#", label: "Facebook" },
-  { icon: <FaTwitter className="w-3.5 h-3.5" />,    href: "#", label: "Twitter" },
-  { icon: <FaInstagram className="w-3.5 h-3.5" />,  href: "#", label: "Instagram" },
-  { icon: <FaYoutube className="w-3.5 h-3.5" />,    href: "#", label: "YouTube" },
-  { icon: <FaPinterestP className="w-3.5 h-3.5" />, href: "#", label: "Pinterest" },
+const supportLinks = [
+  { label: "Help Center", href: "/contact" },
+  { label: "Privacy", href: "#" },
+  { label: "Terms", href: "#" },
+  { label: "Refunds", href: "#" },
+];
+
+const socials = [
+  { icon: <FaFacebookF className="w-3 h-3" />, href: "#", label: "Facebook" },
+  { icon: <FaTwitter className="w-3 h-3" />, href: "#", label: "Twitter" },
+  { icon: <FaInstagram className="w-3 h-3" />, href: "#", label: "Instagram" },
+  { icon: <FaYoutube className="w-3 h-3" />, href: "#", label: "YouTube" },
+  { icon: <FaPinterestP className="w-3 h-3" />, href: "#", label: "Pinterest" },
 ];
 
 export default function Footer() {
+  const [email, setEmail] = useState("");
+
+  const handleSubscribe = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email || !/^\S+@\S+\.\S+$/.test(email)) {
+      toast.error("Please enter a valid email");
+      return;
+    }
+    toast.success("Subscribed — welcome to the studio");
+    setEmail("");
+  };
+
   return (
-    <footer className="bg-slate-950 text-white">
-
-      {/* ── TOP BAR: Brand + Socials ── */}
-      <div className="border-b border-slate-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-8 py-5 flex items-center justify-between gap-4">
-
-          {/* Brand */}
-          <Link href="/" className="flex items-center gap-2.5 group">
-            <div className="w-9 h-9 rounded-sm bg-[#E50914] flex items-center justify-center shadow group-hover:scale-105 transition-transform duration-200">
-              <Film className="w-5 h-5 text-white" strokeWidth={2.2} />
+    <footer className="relative bg-[#121315] text-white">
+      <div className="max-w-[1400px] mx-auto px-5 sm:px-8 pt-20 pb-10">
+        {/* Editorial mark */}
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-80px" }}
+          transition={{ duration: 0.7, ease: "easeOut" }}
+          className="relative overflow-hidden rounded-[2rem] bg-[#23262B] border border-white/8 p-8 sm:p-12 mb-16"
+        >
+          <div className="absolute -top-20 -right-20 w-72 h-72 rounded-full bg-white/[0.04] blur-3xl" />
+          <div className="relative grid lg:grid-cols-2 gap-10 items-center">
+            <div>
+              <p className="text-[11px] tracking-[0.4em] uppercase text-white/50 mb-4">
+                Editorial Letter
+              </p>
+              <h3 className="text-4xl md:text-5xl font-light text-white tracking-tight leading-[1.05]">
+                Stories from the
+                <br />
+                <span className="italic font-serif text-white/80">
+                  cutting room
+                </span>{" "}
+                — every Friday.
+              </h3>
+              <p className="text-white/60 mt-5 max-w-md text-[15px] leading-relaxed">
+                A curated newsletter of releases, retrospectives and
+                behind-the-lens features. Slow reading. No noise. Unsubscribe
+                anytime.
+              </p>
             </div>
-            <span className="text-white font-black text-xl tracking-tight">
-              Movies <span className="text-[#E50914]">Ok</span>
-            </span>
-          </Link>
 
-          {/* Social Icons */}
+            <form
+              onSubmit={handleSubscribe}
+              className="flex items-center gap-2 p-1.5 rounded-full bg-[#121315] border border-white/8"
+            >
+              <div className="relative flex-1">
+                <Mail className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="your@email.com"
+                  className="w-full pl-12 pr-4 py-3 bg-transparent border-0 outline-none text-white text-sm placeholder:text-white/40"
+                />
+              </div>
+              <button
+                type="submit"
+                className="inline-flex items-center gap-2 bg-white text-[#121315] px-5 py-3 rounded-full text-sm font-medium hover:scale-[1.02] transition-transform shadow-[0_10px_24px_-6px_rgba(255,255,255,0.25)]"
+              >
+                <Send className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">Subscribe</span>
+              </button>
+            </form>
+          </div>
+        </motion.div>
+
+        {/* Columns */}
+        <div className="grid md:grid-cols-2 lg:grid-cols-12 gap-12 lg:gap-8">
+          {/* Brand */}
+          <div className="lg:col-span-5">
+            <Link href="/" className="inline-flex items-center gap-3 group">
+              <div className="w-11 h-11 rounded-full bg-white text-[#121315] flex items-center justify-center font-bold tracking-tighter shadow-[0_12px_30px_-6px_rgba(255,255,255,0.18)]">
+                M
+              </div>
+              <div className="leading-tight">
+                <span className="block text-white font-medium text-lg tracking-tight">
+                  Movies OK
+                </span>
+                <span className="block text-[10px] text-white/40 tracking-[0.3em] uppercase">
+                  Cinema Atelier
+                </span>
+              </div>
+            </Link>
+            <p className="text-white/60 text-[15px] leading-relaxed mt-7 max-w-md">
+              A cinematic editorial platform — discover, book, and review the
+              world's most beautiful films, curated by people who live for
+              cinema.
+            </p>
+
+            <div className="mt-8 flex flex-col gap-3 text-sm text-white/60">
+              <span className="flex items-center gap-3">
+                <span className="w-8 h-8 rounded-full bg-white/[0.04] border border-white/8 flex items-center justify-center">
+                  <MapPin className="w-3.5 h-3.5 text-white/70" />
+                </span>
+                350 Fifth Avenue, New York, NY 10118
+              </span>
+              <span className="flex items-center gap-3">
+                <span className="w-8 h-8 rounded-full bg-white/[0.04] border border-white/8 flex items-center justify-center">
+                  <Phone className="w-3.5 h-3.5 text-white/70" />
+                </span>
+                +1 (800) 123-4567
+              </span>
+              <span className="flex items-center gap-3">
+                <span className="w-8 h-8 rounded-full bg-white/[0.04] border border-white/8 flex items-center justify-center">
+                  <Mail className="w-3.5 h-3.5 text-white/70" />
+                </span>
+                hello@moviesok.com
+              </span>
+            </div>
+          </div>
+
+          {/* Link columns */}
+          {[
+            { title: "Films", items: filmLinks },
+            { title: "Studio", items: studioLinks },
+            { title: "Support", items: supportLinks },
+          ].map((col) => (
+            <div key={col.title} className="lg:col-span-2">
+              <p className="text-[11px] tracking-[0.4em] uppercase text-white/40 mb-5">
+                {col.title}
+              </p>
+              <ul className="flex flex-col gap-3">
+                {col.items.map((l) => (
+                  <li key={l.label}>
+                    <Link
+                      href={l.href}
+                      className="group inline-flex items-center gap-1.5 text-[15px] text-white/70 hover:text-white transition-colors"
+                    >
+                      {l.label}
+                      <ArrowUpRight className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all duration-200" />
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+
+          {/* Apps */}
+          <div className="lg:col-span-1">
+            <p className="text-[11px] tracking-[0.4em] uppercase text-white/40 mb-5">
+              Apps
+            </p>
+            <div className="flex flex-col gap-2.5">
+              {["iOS", "Android"].map((p) => (
+                <a
+                  key={p}
+                  href="#"
+                  className="group flex items-center justify-between gap-2 px-4 py-2.5 rounded-full bg-white/[0.04] border border-white/8 hover:bg-white/[0.08] hover:border-white/15 text-white/80 hover:text-white text-xs transition-all"
+                >
+                  <span className="font-medium tracking-wide">{p}</span>
+                  <ArrowUpRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                </a>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom */}
+        <div className="mt-16 pt-8 border-t border-white/8 flex flex-col sm:flex-row items-center justify-between gap-5">
+          <p className="text-white/40 text-xs tracking-wide">
+            © {new Date().getFullYear()} Movies OK — a cinematic editorial.
+            All rights reserved.
+          </p>
           <div className="flex items-center gap-2">
-            {socialLinks.map((s) => (
+            {socials.map((s) => (
               <a
                 key={s.label}
                 href={s.href}
                 aria-label={s.label}
-                className="w-8 h-8 rounded-sm border border-slate-700 flex items-center justify-center text-slate-400 hover:text-white hover:border-[#E50914] hover:bg-[#E50914] transition-all duration-200"
+                className="w-9 h-9 rounded-full border border-white/8 flex items-center justify-center text-white/60 hover:text-[#121315] hover:bg-white hover:border-white transition-all duration-300"
               >
                 {s.icon}
               </a>
@@ -66,93 +223,6 @@ export default function Footer() {
           </div>
         </div>
       </div>
-
-      {/* ── MAIN CONTENT: 3 columns ── */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-8 py-14">
-        <div className="flex flex-col md:flex-row gap-10 md:gap-6">
-
-          {/* Col 1 — About text */}
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-7 h-7 rounded-sm bg-[#E50914] flex items-center justify-center">
-                <Film className="w-3.5 h-3.5 text-white" strokeWidth={2.2} />
-              </div>
-              <span className="font-black text-base">
-                Movies <span className="text-[#E50914]">Ok</span>
-              </span>
-            </div>
-            <p className="text-slate-400 text-sm leading-relaxed mb-5 max-w-xs">
-              Your ultimate destination for discovering, booking, and experiencing
-              the world's best cinema. From blockbusters to hidden indie gems — we
-              bring every story to your screen.
-            </p>
-            <p className="text-slate-400 text-sm leading-relaxed max-w-xs">
-              Trusted by millions of movie lovers across 40+ countries since 2004.
-            </p>
-          </div>
-
-          {/* Col 2 — Movies */}
-          <div className="w-40 shrink-0">
-            <h4 className="text-white font-bold text-sm uppercase tracking-widest mb-5 flex items-center gap-2">
-              <span className="w-5 h-0.5 bg-[#E50914] inline-block rounded-sm" />
-              Movies
-            </h4>
-            <ul className="flex flex-col gap-3">
-              {movieLinks.map((l) => (
-                <li key={l.label}>
-                  <Link
-                    href={l.href}
-                    className="text-slate-400 hover:text-[#E50914] text-sm transition-colors duration-150 flex items-center gap-2 group"
-                  >
-                    <span className="w-1 h-1 rounded-sm bg-slate-600 group-hover:bg-[#E50914] transition-colors duration-150 shrink-0" />
-                    {l.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Col 3 — Links */}
-          <div className="w-40 shrink-0">
-            <h4 className="text-white font-bold text-sm uppercase tracking-widest mb-5 flex items-center gap-2">
-              <span className="w-5 h-0.5 bg-[#E50914] inline-block rounded-sm" />
-              Links
-            </h4>
-            <ul className="flex flex-col gap-3">
-              {quickLinks.map((l) => (
-                <li key={l.label}>
-                  <Link
-                    href={l.href}
-                    className="text-slate-400 hover:text-[#E50914] text-sm transition-colors duration-150 flex items-center gap-2 group"
-                  >
-                    <span className="w-1 h-1 rounded-sm bg-slate-600 group-hover:bg-[#E50914] transition-colors duration-150 shrink-0" />
-                    {l.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-        </div>
-      </div>
-
-      {/* ── BOTTOM BAR: Copyright ── */}
-      <div className="border-t border-slate-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-8 py-4 flex items-center justify-center">
-          <p className="text-slate-500 text-xs text-center">
-            © Copyright 2023 by{" "}
-            <a
-              href="https://ovatheme.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-[#E50914] hover:text-red-400 transition-colors duration-150 font-medium"
-            >
-              Ovatheme.com
-            </a>
-          </p>
-        </div>
-      </div>
-
     </footer>
   );
 }

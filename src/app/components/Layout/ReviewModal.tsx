@@ -1,9 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import { reviewRoute } from "../service/review";
 import { toast } from "sonner";
-import { Star, X, LogIn } from "lucide-react";
+import { Star, X, LogIn, Loader2, ArrowUpRight } from "lucide-react";
 import { useSession } from "@/src/app/(auth)/useAuth";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -19,12 +20,10 @@ export default function ReviewModal({ movieId }: { movieId: string }) {
   const [tags, setTags] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // ESC key close modal
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
       if (e.key === "Escape") setIsOpen(false);
     };
-
     window.addEventListener("keydown", handleEsc);
     return () => window.removeEventListener("keydown", handleEsc);
   }, []);
@@ -39,22 +38,21 @@ export default function ReviewModal({ movieId }: { movieId: string }) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     if (!session) {
       toast.error("You must be logged in to review.");
       return;
     }
-
     if (!content.trim()) {
-      toast.error("Please write a review content.");
+      toast.error("Please write a review.");
       return;
     }
 
     try {
       setLoading(true);
-
-      const tagArray = tags.split(",").map(tag => tag.trim()).filter(tag => tag !== "");
-
+      const tagArray = tags
+        .split(",")
+        .map((t) => t.trim())
+        .filter(Boolean);
       await reviewRoute.createReview({
         movieId,
         rating,
@@ -64,181 +62,183 @@ export default function ReviewModal({ movieId }: { movieId: string }) {
         userId: session.user.id,
         userName: session.user.name || "Anonymous",
       });
-
-      toast.success("Review submitted! It will be visible after admin approval.");
-
+      toast.success("Review submitted — pending approval.");
       resetForm();
-
-      // ✅ refresh Next.js data instead of full reload
       router.refresh();
     } catch (error: unknown) {
-      const err = error as {
-        response?: { data?: { message?: string } };
-      };
-
-      toast.error(
-        err.response?.data?.message || "Failed to submit review"
-      );
+      const err = error as { response?: { data?: { message?: string } } };
+      toast.error(err.response?.data?.message || "Failed to submit review");
     } finally {
       setLoading(false);
     }
   };
 
   if (isPending) {
-    return <div className="h-12 w-40 bg-gray-100 animate-pulse rounded-lg" />;
+    return <div className="h-11 w-40 bg-white/[0.04] animate-pulse rounded-full" />;
   }
 
   if (!session) {
     return (
       <Link
         href="/login"
-        className="bg-[#141414] hover:bg-[#2B2B2B] text-white px-8 py-3 rounded-sm shadow font-medium transition-all flex items-center gap-2 group border border-[#2B2B2B]"
+        className="inline-flex items-center gap-2 px-5 py-3 rounded-full border border-white/10 bg-white/[0.04] backdrop-blur-md text-white/85 hover:text-white text-xs font-medium transition-colors"
       >
-        <LogIn className="w-5 h-5 group-hover:translate-x-1 transition-transform text-[#E50914]" />
-        Login to Review
+        <LogIn className="w-3.5 h-3.5" />
+        Sign in to review
       </Link>
     );
   }
 
   return (
     <>
-      {/* Open Button */}
       <button
         onClick={() => setIsOpen(true)}
-        className="bg-[#E50914] hover:bg-red-700 text-white px-8 py-3 rounded-sm shadow-lg font-medium transition-all transform hover:scale-105 flex items-center gap-2"
+        className="group inline-flex items-center gap-2 px-5 py-3 rounded-full border border-white/10 bg-white/[0.04] backdrop-blur-md text-white/85 hover:text-white text-xs font-medium transition-colors"
       >
-        <Star className="w-5 h-5 fill-current" />
-        Rate and Review
+        <Star className="w-3.5 h-3.5" />
+        Rate & Review
       </button>
 
-      {/* Modal */}
-      {isOpen && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-[#141414] border border-[#2B2B2B] rounded-sm p-8 w-full max-w-lg shadow-2xl relative text-white animate-in fade-in zoom-in duration-200">
-            
-            {/* Close Button */}
-            <button
-              onClick={() => setIsOpen(false)}
-              className="absolute top-6 right-6 text-gray-400 hover:text-gray-600 transition-colors"
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-[#121315]/85 backdrop-blur-md flex items-center justify-center z-50 p-4"
+            onClick={() => setIsOpen(false)}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.96, y: 14 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.96, y: 14 }}
+              transition={{ duration: 0.3, ease: "easeOut" }}
+              onClick={(e) => e.stopPropagation()}
+              className="rounded-[2rem] bg-[#23262B] border border-white/8 p-8 sm:p-10 w-full max-w-lg luxury-shadow relative text-white"
             >
-              <X className="w-6 h-6" />
-            </button>
+              <button
+                onClick={() => setIsOpen(false)}
+                aria-label="Close"
+                className="absolute top-5 right-5 w-9 h-9 rounded-full bg-white/[0.04] border border-white/10 flex items-center justify-center text-white/70 hover:text-white hover:bg-white/[0.08] transition-colors"
+              >
+                <X className="w-4 h-4" />
+              </button>
 
-            {/* Header */}
-            <div className="mb-6">
-              <h2 className="text-3xl font-extrabold text-white border-b-4 border-[#E50914] w-fit pb-1 mb-2">
-                Share Your Review
-              </h2>
-              <p className="text-gray-400 font-medium">
-                Help others by sharing your honest opinion.
+              <p className="text-[10px] tracking-[0.4em] uppercase text-white/45 mb-3">
+                Share your review
               </p>
-            </div>
+              <h2
+                className="text-white font-light leading-[1.05] tracking-tight"
+                style={{ fontSize: "1.8rem" }}
+              >
+                Tell us how it{" "}
+                <span className="italic font-serif text-white/80">made you feel.</span>
+              </h2>
 
-            {/* Form */}
-            <form onSubmit={handleSubmit} className="space-y-5">
-              
-              {/* Rating */}
-              <div className="space-y-3">
-                <div className="flex justify-between items-center">
-                  <label className="text-sm font-bold text-gray-400 uppercase tracking-wider">
-                    Your Rating
-                  </label>
-                  <span className="text-2xl font-black text-[#E50914]">{rating}/10</span>
+              <form onSubmit={handleSubmit} className="space-y-5 mt-7">
+                {/* Rating */}
+                <div>
+                  <div className="flex items-center justify-between mb-3">
+                    <p className="text-[10px] tracking-[0.35em] uppercase text-white/45">
+                      Rating
+                    </p>
+                    <span className="text-2xl font-light tracking-tight">
+                      {rating}
+                      <span className="text-white/40 text-sm">/10</span>
+                    </span>
+                  </div>
+                  <div className="flex justify-between gap-1 bg-[#121315] border border-white/8 rounded-2xl p-3">
+                    {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((star) => (
+                      <button
+                        key={star}
+                        type="button"
+                        aria-label={`Rate ${star} star`}
+                        onClick={() => setRating(star)}
+                        className="transition-transform hover:scale-110"
+                      >
+                        <Star
+                          className={`w-6 h-6 ${
+                            star <= rating
+                              ? "fill-white text-white"
+                              : "text-white/15"
+                          }`}
+                        />
+                      </button>
+                    ))}
+                  </div>
                 </div>
 
-                <div className="flex justify-between gap-1 bg-[#000000] p-3 rounded-sm border border-[#2B2B2B]">
-                  {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((star) => (
-                    <button
-                      key={star}
-                      type="button"
-                      aria-label={`Rate ${star} star`}
-                      onClick={() => setRating(star)}
-                      className="transition-all hover:scale-125 focus:outline-none"
-                    >
-                      <Star
-                        className={`w-6 h-6 ${
-                          star <= rating
-                            ? "fill-yellow-400 text-yellow-400"
-                            : "text-gray-300"
-                        }`}
-                      />
-                    </button>
-                  ))}
+                {/* Tags */}
+                <div>
+                  <p className="text-[10px] tracking-[0.35em] uppercase text-white/45 mb-2">
+                    Tags
+                  </p>
+                  <input
+                    type="text"
+                    placeholder="Classic, Must Watch, Visual Masterpiece"
+                    value={tags}
+                    onChange={(e) => setTags(e.target.value)}
+                    className="w-full bg-[#121315] border border-white/8 text-white placeholder:text-white/35 rounded-2xl px-4 py-3 outline-none focus:border-white/30 transition-all"
+                  />
                 </div>
-              </div>
 
-              {/* Tags */}
-              <div className="space-y-2">
-                <label className="text-sm font-bold text-gray-400 uppercase tracking-wider">
-                  Movie Tags
+                {/* Review */}
+                <div>
+                  <p className="text-[10px] tracking-[0.35em] uppercase text-white/45 mb-2">
+                    Detailed review
+                  </p>
+                  <textarea
+                    placeholder="Plot, performances, direction — your honest take."
+                    value={content}
+                    onChange={(e) => setContent(e.target.value)}
+                    className="w-full bg-[#121315] border border-white/8 text-white placeholder:text-white/35 rounded-2xl px-4 py-3 min-h-[120px] outline-none focus:border-white/30 transition-all resize-none"
+                  />
+                </div>
+
+                {/* Spoiler */}
+                <label className="flex items-center gap-3 p-4 bg-[#121315] rounded-2xl border border-white/8 cursor-pointer select-none">
+                  <input
+                    type="checkbox"
+                    checked={isSpoiler}
+                    onChange={(e) => setIsSpoiler(e.target.checked)}
+                    className="w-4 h-4 accent-white rounded-sm cursor-pointer"
+                  />
+                  <span className="text-sm text-white/80">
+                    Contains spoilers (will be hidden initially)
+                  </span>
                 </label>
-                <input
-                  type="text"
-                  placeholder="e.g. Classic, Must Watch, Visual Masterpiece"
-                  value={tags}
-                  onChange={(e) => setTags(e.target.value)}
-                  className="w-full bg-[#000000] border border-[#2B2B2B] text-white focus:border-[#E50914] focus:ring-4 focus:ring-[#E50914]/10 rounded-sm px-4 py-3 outline-none transition-all placeholder:text-gray-600"
-                />
-              </div>
 
-              {/* Review Text */}
-              <div className="space-y-2">
-                <label className="text-sm font-bold text-gray-400 uppercase tracking-wider">
-                  Detailed Review
-                </label>
-
-                <textarea
-                  placeholder="Tell us more about the plot, characters, and direction..."
-                  value={content}
-                  onChange={(e) => setContent(e.target.value)}
-                  className="w-full bg-[#000000] border border-[#2B2B2B] text-white focus:border-[#E50914] focus:ring-4 focus:ring-[#E50914]/10 rounded-sm p-4 min-h-[120px] outline-none transition-all resize-none placeholder:text-gray-600"
-                />
-              </div>
-
-              {/* Spoiler Toggle */}
-              <div className="flex items-center gap-3 p-4 bg-[#000000] rounded-sm border border-[#2B2B2B]">
-                <input 
-                  type="checkbox" 
-                  id="spoiler" 
-                  checked={isSpoiler}
-                  onChange={(e) => setIsSpoiler(e.target.checked)}
-                  className="w-5 h-5 accent-[#E50914] cursor-pointer"
-                />
-                <label htmlFor="spoiler" className="text-sm font-bold text-gray-300 cursor-pointer select-none">
-                  Contains Spoilers? (Will be hidden initially)
-                </label>
-              </div>
-
-              {/* Buttons */}
-              <div className="flex flex-col gap-3 pt-2">
-                
-                <button
-                  type="submit"
-                  disabled={loading || !content.trim()}
-                  className="w-full py-4 bg-[#E50914] hover:bg-red-700 disabled:bg-[#2B2B2B] text-white rounded-sm font-black text-lg transition-all flex justify-center items-center gap-2 active:scale-95"
-                >
-                  {loading ? (
-                    <>
-                      <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-sm animate-spin" />
-                      Submitting...
-                    </>
-                  ) : (
-                    "SUBMIT REVIEW"
-                  )}
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => setIsOpen(false)}
-                  className="w-full py-3 bg-[#000000] border border-[#2B2B2B] text-gray-300 rounded-sm hover:bg-[#2B2B2B]"
-                >
-                  Maybe Later
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+                <div className="flex flex-col gap-3 pt-1">
+                  <button
+                    type="submit"
+                    disabled={loading || !content.trim()}
+                    className="group w-full inline-flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-full bg-white text-[#121315] font-medium text-sm hover:scale-[1.01] disabled:opacity-50 disabled:cursor-not-allowed transition-transform shadow-[0_14px_30px_-8px_rgba(255,255,255,0.25)]"
+                  >
+                    {loading ? (
+                      <>
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        Submitting…
+                      </>
+                    ) : (
+                      <>
+                        Submit review
+                        <ArrowUpRight className="w-4 h-4 group-hover:rotate-45 transition-transform" />
+                      </>
+                    )}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setIsOpen(false)}
+                    className="w-full px-6 py-3 rounded-full border border-white/8 bg-transparent text-white/65 hover:text-white hover:bg-white/[0.04] text-sm font-medium transition-colors"
+                  >
+                    Maybe later
+                  </button>
+                </div>
+              </form>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   );
 }

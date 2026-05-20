@@ -1,250 +1,273 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";
-import { ChevronLeft, ChevronRight, Share2 } from "lucide-react";
-import { cn } from "@/src/app/components/lib/utils";
-import { FaFacebook, FaTwitter } from "react-icons/fa";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  ChevronLeft,
+  ChevronRight,
+  PlayCircle,
+  ArrowUpRight,
+  Star,
+  Clock,
+} from "lucide-react";
+
 interface Slide {
   id: number;
-  genre: string;
+  category: string;
   title: string;
-  subtitle: string;
-  releaseLabel: string;
-  releaseDate: string;
-  bgImage: string;
-  bgColor: string;
+  director: string;
+  year: string;
+  runtime: string;
+  rating: string;
+  description: string;
+  image: string;
+  thumb: string;
 }
 
 const slides: Slide[] = [
   {
     id: 1,
-    genre: "Adventure Movie",
-    title: "THE WAY OF WATER",
-    subtitle: "Writen and Directed by James / United Kingdom 2024",
-    releaseLabel: "Coming in",
-    releaseDate: "April 2024",
-    bgImage:
-      "https://images.unsplash.com/photo-1505118380757-91f5f5632de0?w=1600&q=80",
-    bgColor: "#0f172a",
+    category: "Adventure · Drama",
+    title: "The Way of Water",
+    director: "James Cameron",
+    year: "2024",
+    runtime: "2h 38m",
+    rating: "9.2",
+    description:
+      "A breathtaking journey beneath the surface — where light becomes language and silence carries the weight of a thousand stories.",
+    image:
+      "https://images.unsplash.com/photo-1505118380757-91f5f5632de0?w=1800&q=80",
+    thumb:
+      "https://images.unsplash.com/photo-1505118380757-91f5f5632de0?w=400&q=80",
   },
   {
     id: 2,
-    genre: "Action Thriller",
-    title: "SHADOW PROTOCOL",
-    subtitle: "Directed by Elena Vasquez / United States 2024",
-    releaseLabel: "Coming in",
-    releaseDate: "June 2024",
-    bgImage:
-      "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=1600&q=80",
-    bgColor: "#0c0a09",
+    category: "Thriller · Action",
+    title: "Shadow Protocol",
+    director: "Elena Vasquez",
+    year: "2024",
+    runtime: "2h 12m",
+    rating: "8.7",
+    description:
+      "When silence becomes the loudest weapon — a contemporary noir told in long, unflinching takes through the alleys of Marseille.",
+    image:
+      "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=1800&q=80",
+    thumb:
+      "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=400&q=80",
   },
   {
     id: 3,
-    genre: "Sci-Fi Epic",
-    title: "BEYOND THE STARS",
-    subtitle: "Written and Directed by Chen Wei / Japan 2024",
-    releaseLabel: "Coming in",
-    releaseDate: "August 2024",
-    bgImage:
-      "https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?w=1600&q=80",
-    bgColor: "#0a0f1e",
+    category: "Science Fiction",
+    title: "Beyond the Stars",
+    director: "Chen Wei",
+    year: "2024",
+    runtime: "2h 45m",
+    rating: "9.0",
+    description:
+      "The universe is closer than you think. A poetic meditation on memory, light and the spaces between heartbeats.",
+    image:
+      "https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?w=1800&q=80",
+    thumb:
+      "https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?w=400&q=80",
   },
 ];
 
 export default function Banner() {
   const [current, setCurrent] = useState(0);
-  const [animating, setAnimating] = useState(false);
-  const [direction, setDirection] = useState<"left" | "right">("right");
-
-  const goTo = useCallback(
-    (index: number, dir: "left" | "right") => {
-      if (animating) return;
-      setDirection(dir);
-      setAnimating(true);
-      setTimeout(() => {
-        setCurrent(index);
-        setAnimating(false);
-      }, 500);
-    },
-    [animating],
-  );
-
-  const prev = () => {
-    const index = (current - 1 + slides.length) % slides.length;
-    goTo(index, "left");
-  };
 
   const next = useCallback(() => {
-    const index = (current + 1) % slides.length;
-    goTo(index, "right");
-  }, [current, goTo]);
+    setCurrent((p) => (p + 1) % slides.length);
+  }, []);
 
-  // Auto-play
+  const prev = () => setCurrent((p) => (p - 1 + slides.length) % slides.length);
+
   useEffect(() => {
-    const timer = setInterval(next, 6000);
-    return () => clearInterval(timer);
+    const id = setInterval(next, 7000);
+    return () => clearInterval(id);
   }, [next]);
 
   const slide = slides[current];
 
   return (
-    <section className="relative w-full h-[calc(100vh-72px)] min-h-[500px] overflow-hidden select-none">
-      {/* Background layers */}
-      {slides.map((s, i) => (
-        <div
-          key={s.id}
-          className={cn(
-            "absolute inset-0 transition-opacity duration-700",
-            i === current ? "opacity-100" : "opacity-0",
-          )}
-        >
-          {/* Image */}
-          <img
-            src={s.bgImage}
-            alt={s.title}
-            className="absolute inset-0 w-full h-full object-cover"
-            draggable={false}
-          />
-          {/* Grayscale + dark overlay */}
-          <div className="absolute inset-0 bg-slate-950/70 mix-blend-multiply" />
+    <section className="relative pt-2 pb-16">
+      <div className="max-w-[1400px] mx-auto px-5 sm:px-8">
+        <div className="relative h-[78vh] min-h-[640px] rounded-[2rem] overflow-hidden border border-white/8 luxury-shadow">
+          {/* Background images */}
+          <AnimatePresence mode="sync">
+            <motion.img
+              key={slide.id}
+              src={slide.image}
+              alt={slide.title}
+              initial={{ opacity: 0, scale: 1.08 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 1.2, ease: "easeOut" }}
+              className="absolute inset-0 w-full h-full object-cover"
+              draggable={false}
+            />
+          </AnimatePresence>
+
+          {/* Overlays */}
+          <div className="absolute inset-0 bg-gradient-to-r from-[#121315]/95 via-[#121315]/60 to-[#121315]/20" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#121315] via-transparent to-transparent" />
+
+          {/* Grain */}
           <div
-            className="absolute inset-0"
+            className="absolute inset-0 opacity-[0.05] mix-blend-overlay pointer-events-none"
             style={{
-              background:
-                "linear-gradient(to right, rgba(2,6,23,0.85) 30%, rgba(2,6,23,0.3) 100%)",
+              backgroundImage:
+                "radial-gradient(rgba(255,255,255,0.6) 1px, transparent 1px)",
+              backgroundSize: "3px 3px",
             }}
           />
-        </div>
-      ))}
 
-      {/* Left social sidebar */}
-      <div className="absolute left-0 top-1/2 -translate-y-1/2 z-20 flex flex-col items-center gap-4 pl-4">
-        <span
-          className="text-slate-400 text-xs tracking-widest"
-          style={{ writingMode: "vertical-rl", transform: "rotate(180deg)" }}
-        >
-          Share
-        </span>
-        <div className="w-px h-10 bg-slate-600" />
-        <a
-          href="#"
-          className="text-slate-400 hover:text-[#E50914] transition-colors duration-200"
-        >
-          <FaTwitter className="w-4 h-4" />
-        </a>
-        <a
-          href="#"
-          className="text-slate-400 hover:text-[#E50914] transition-colors duration-200"
-        >
-          <FaFacebook className="w-4 h-4" />
-        </a>
-        <a
-          href="#"
-          className="text-slate-400 hover:text-[#E50914] transition-colors duration-200"
-        >
-          <Share2 className="w-4 h-4" />
-        </a>
-      </div>
+          {/* Content */}
+          <div className="relative h-full grid lg:grid-cols-12 gap-8 px-6 sm:px-10 lg:px-14 py-10 lg:py-16">
+            {/* Left content */}
+            <div className="lg:col-span-7 flex flex-col justify-end max-w-2xl">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={slide.id}
+                  initial={{ opacity: 0, y: 28 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -16 }}
+                  transition={{ duration: 0.7, ease: "easeOut" }}
+                >
+                  <p className="text-[11px] tracking-[0.45em] uppercase text-white/60 mb-5">
+                    Featured · {slide.category}
+                  </p>
+                  <h1 className="text-white font-light leading-[0.95] tracking-tight"
+                      style={{ fontSize: "clamp(2.75rem, 7vw, 5.75rem)" }}>
+                    {slide.title.split(" ").map((w, i) => (
+                      <span key={i} className={i % 2 === 1 ? "italic font-serif text-white/80" : ""}>
+                        {w}{" "}
+                      </span>
+                    ))}
+                  </h1>
+                  <p className="text-white/70 mt-6 text-base md:text-lg leading-relaxed max-w-xl">
+                    {slide.description}
+                  </p>
 
-      {/* Coming in — top right */}
-      <div
-        className={cn(
-          "absolute top-10 right-10 z-20 text-right transition-all duration-500",
-          animating ? "opacity-0 translate-y-4" : "opacity-100 translate-y-0",
-        )}
-      >
-        <p className="text-slate-300 text-sm font-medium tracking-wide">
-          {slide.releaseLabel}
-        </p>
-        <p className="text-white text-3xl font-extrabold leading-tight">
-          {slide.releaseDate}
-        </p>
-        <div className="mt-1 h-0.5 bg-[#E50914] ml-auto w-3/4 rounded-full" />
-      </div>
+                  <div className="mt-7 flex items-center gap-5 text-white/60 text-xs tracking-wider">
+                    <span className="flex items-center gap-1.5">
+                      <Star className="w-3.5 h-3.5" />
+                      {slide.rating}
+                    </span>
+                    <span className="w-1 h-1 rounded-full bg-white/30" />
+                    <span className="flex items-center gap-1.5">
+                      <Clock className="w-3.5 h-3.5" />
+                      {slide.runtime}
+                    </span>
+                    <span className="w-1 h-1 rounded-full bg-white/30" />
+                    <span>Dir. {slide.director}</span>
+                    <span className="w-1 h-1 rounded-full bg-white/30" />
+                    <span>{slide.year}</span>
+                  </div>
 
-      {/* Main content */}
-      <div className="relative z-20 h-full flex items-center">
-        <div className="max-w-7xl mx-auto px-16 sm:px-20 w-full">
-          <div
-            className={cn(
-              "max-w-2xl transition-all duration-500 ease-out",
-              animating
-                ? direction === "right"
-                  ? "opacity-0 -translate-x-8"
-                  : "opacity-0 translate-x-8"
-                : "opacity-100 translate-x-0",
-            )}
-          >
-            {/* Genre */}
-            <p
-              className="text-[#E50914] text-lg font-medium mb-2"
-              style={{ fontFamily: "'Dancing Script', cursive" }}
-            >
-              {slide.genre}
+                  <div className="mt-9 flex items-center gap-3 flex-wrap">
+                    <button className="group inline-flex items-center gap-3 bg-white text-[#121315] pl-6 pr-2 py-2 rounded-full font-medium text-sm hover:scale-[1.02] transition-transform shadow-[0_18px_40px_-10px_rgba(255,255,255,0.25)]">
+                      Book Ticket
+                      <span className="w-9 h-9 rounded-full bg-[#121315] text-white flex items-center justify-center group-hover:rotate-45 transition-transform duration-300">
+                        <ArrowUpRight className="w-4 h-4" />
+                      </span>
+                    </button>
+                    <button className="group inline-flex items-center gap-3 px-6 py-3 rounded-full border border-white/15 bg-white/[0.04] backdrop-blur-md text-white text-sm font-medium hover:bg-white/[0.08] transition-colors">
+                      <PlayCircle className="w-4 h-4" />
+                      Watch Trailer
+                    </button>
+                  </div>
+                </motion.div>
+              </AnimatePresence>
+            </div>
+
+            {/* Right floating thumbs */}
+            <div className="hidden lg:flex lg:col-span-5 items-end justify-end">
+              <div className="glass rounded-3xl p-4 max-w-sm w-full">
+                <div className="flex items-center justify-between mb-4">
+                  <p className="text-[10px] tracking-[0.4em] uppercase text-white/50">
+                    Now Featuring
+                  </p>
+                  <div className="flex items-center gap-1.5 text-white/50 text-[10px] tracking-widest">
+                    <span className="text-white font-semibold">
+                      {String(current + 1).padStart(2, "0")}
+                    </span>
+                    /
+                    <span>{String(slides.length).padStart(2, "0")}</span>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-3 gap-3">
+                  {slides.map((s, i) => (
+                    <button
+                      key={s.id}
+                      onClick={() => setCurrent(i)}
+                      className="relative group aspect-[3/4] overflow-hidden rounded-2xl border border-white/10"
+                    >
+                      <img
+                        src={s.thumb}
+                        alt={s.title}
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#121315] via-transparent to-transparent" />
+                      {i === current && (
+                        <motion.span
+                          layoutId="hero-active"
+                          className="absolute inset-0 ring-2 ring-white rounded-2xl"
+                          transition={{ duration: 0.45 }}
+                        />
+                      )}
+                      <p className="absolute bottom-2 left-2 right-2 text-[10px] text-white font-medium truncate">
+                        {s.title}
+                      </p>
+                    </button>
+                  ))}
+                </div>
+
+                <div className="mt-4 pt-4 border-t border-white/8 flex items-center justify-between">
+                  <p className="text-[11px] text-white/50">
+                    Swipe through this week's selection
+                  </p>
+                  <div className="flex items-center gap-1.5">
+                    <button
+                      onClick={prev}
+                      aria-label="Previous"
+                      className="w-8 h-8 rounded-full border border-white/10 flex items-center justify-center text-white/70 hover:text-white hover:bg-white/[0.06] transition-all"
+                    >
+                      <ChevronLeft className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={next}
+                      aria-label="Next"
+                      className="w-8 h-8 rounded-full bg-white text-[#121315] flex items-center justify-center hover:scale-[1.06] transition-transform"
+                    >
+                      <ChevronRight className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Bottom progress strip */}
+          <div className="absolute bottom-6 left-6 right-6 sm:left-10 sm:right-10 flex items-center gap-4">
+            <p className="text-[10px] tracking-[0.3em] uppercase text-white/40 hidden md:block">
+              Reel 01 — Curated this week
             </p>
-
-            {/* Title */}
-            <h1
-              className="text-white font-black leading-none tracking-tight mb-4"
-              style={{ fontSize: "clamp(2.5rem, 6vw, 5rem)" }}
-            >
-              {slide.title}
-            </h1>
-
-            {/* Subtitle */}
-            <p className="text-slate-300 text-base mb-8">{slide.subtitle}</p>
-
-            {/* CTA */}
-            <button className="px-9 py-4 bg-[#E50914] hover:bg-[#c05f24] text-white font-bold text-sm tracking-widest uppercase rounded transition-all duration-200 shadow-lg hover:shadow-[#E50914]/30 hover:scale-105 active:scale-95">
-              Get Ticket
-            </button>
+            <div className="flex-1 h-px bg-white/10 relative overflow-hidden">
+              <motion.span
+                key={slide.id}
+                initial={{ width: "0%" }}
+                animate={{ width: "100%" }}
+                transition={{ duration: 7, ease: "linear" }}
+                className="absolute top-0 left-0 h-px bg-white"
+              />
+            </div>
+            <span className="text-[10px] tracking-[0.3em] uppercase text-white/40">
+              {slide.year}
+            </span>
           </div>
         </div>
       </div>
-
-      {/* Slide counter */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex items-center gap-3">
-        {slides.map((_, i) => (
-          <button
-            key={i}
-            onClick={() => goTo(i, i > current ? "right" : "left")}
-            className={cn(
-              "transition-all duration-300 rounded-full",
-              i === current
-                ? "w-8 h-2 bg-[#E50914]"
-                : "w-2 h-2 bg-slate-500 hover:bg-slate-300",
-            )}
-          />
-        ))}
-      </div>
-
-      {/* Slide number display */}
-      <div className="absolute bottom-8 right-10 z-20 flex items-center gap-2 text-slate-400 text-sm font-mono">
-        <span className="text-white font-bold text-lg">
-          {String(current + 1).padStart(2, "0")}
-        </span>
-        <span>/</span>
-        <span>{String(slides.length).padStart(2, "0")}</span>
-      </div>
-
-      {/* Arrow Controls */}
-      <button
-        onClick={prev}
-        className="absolute left-16 sm:left-20 bottom-6 z-20 p-2 rounded-full border border-slate-600 text-slate-300 hover:text-white hover:border-[#E50914] hover:bg-[#E50914]/10 transition-all duration-200"
-        aria-label="Previous slide"
-      >
-        <ChevronLeft className="w-5 h-5" />
-      </button>
-      <button
-        onClick={next}
-        className="absolute left-32 sm:left-36 bottom-6 z-20 p-2 rounded-full border border-slate-600 text-slate-300 hover:text-white hover:border-[#E50914] hover:bg-[#E50914]/10 transition-all duration-200"
-        aria-label="Next slide"
-      >
-        <ChevronRight className="w-5 h-5" />
-      </button>
-
-      {/* Bottom orange bar */}
-      <div className="absolute bottom-0 left-0 right-0 h-1 bg-[#E50914] z-20" />
     </section>
   );
 }

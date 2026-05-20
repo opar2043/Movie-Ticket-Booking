@@ -6,67 +6,105 @@ import { UserRole } from "@/src/app/(auth)/useAuth";
 
 export default async function UsersPage() {
   const responseData = await userRoute.getUsers();
-  const users = Array.isArray(responseData) ? responseData : responseData?.data || [];
+  const users = Array.isArray(responseData)
+    ? responseData
+    : responseData?.data || [];
 
   return (
-    <div className="w-full h-full animate-in fade-in slide-in-from-bottom-4 duration-500 text-white">
-      <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight text-white flex items-center gap-2">
-            <UserIcon className="w-6 h-6 text-[#E50914]" />
-            Manage Users
-          </h1>
-          <p className="text-gray-400 mt-1">View and manage all registered CineVerse users.</p>
-        </div>
+    <div className="text-white">
+      {/* Header */}
+      <div className="mb-8">
+        <p className="text-[11px] tracking-[0.45em] uppercase text-white/50 mb-3">
+          Members · {users.length} accounts
+        </p>
+        <h1
+          className="text-white font-light leading-[1] tracking-tight"
+          style={{ fontSize: "clamp(1.8rem, 3.5vw, 2.8rem)" }}
+        >
+          Manage the{" "}
+          <span className="italic font-serif text-white/80">community.</span>
+        </h1>
+        <p className="text-white/55 mt-3 max-w-xl text-sm">
+          Promote, demote and remove members. Be considerate — they're the
+          reason this studio exists.
+        </p>
       </div>
 
-      <div className="bg-[#141414] border border-[#2B2B2B] rounded-sm shadow-sm overflow-hidden">
+      {/* Table */}
+      <div className="rounded-3xl bg-[#23262B] border border-white/8 overflow-hidden luxury-shadow">
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm whitespace-nowrap">
-            <thead className="bg-[#000000] border-b border-[#2B2B2B] text-gray-400 uppercase font-semibold">
+          <table className="w-full text-left whitespace-nowrap">
+            <thead className="bg-[#121315] border-b border-white/8">
               <tr>
-                <th className="px-6 py-4">User</th>
-                <th className="px-6 py-4">Email</th>
-                <th className="px-6 py-4">Joined At</th>
-                <th className="px-6 py-4">Role</th>
-                <th className="px-6 py-4 text-right">Actions</th>
+                {["User", "Email", "Joined", "Role", "Actions"].map((h, i) => (
+                  <th
+                    key={h}
+                    className={`px-6 py-4 text-[10px] tracking-[0.3em] uppercase text-white/45 ${
+                      i === 4 ? "text-right" : ""
+                    }`}
+                  >
+                    {h}
+                  </th>
+                ))}
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#2B2B2B]">
+            <tbody className="divide-y divide-white/8">
               {users.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="px-6 py-12 text-center text-gray-500">
-                    No users found.
+                  <td colSpan={5} className="px-6 py-20 text-center">
+                    <div className="flex flex-col items-center gap-3 text-white/55">
+                      <div className="w-12 h-12 rounded-full bg-white/[0.04] border border-white/10 flex items-center justify-center">
+                        <UserIcon className="w-5 h-5" />
+                      </div>
+                      <p className="text-base font-medium text-white">
+                        No members yet
+                      </p>
+                    </div>
                   </td>
                 </tr>
               ) : (
                 users.map((user: any) => (
-                  <tr key={user.id} className="hover:bg-[#000000] transition-colors">
+                  <tr
+                    key={user.id}
+                    className="hover:bg-white/[0.03] transition-colors"
+                  >
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
                         {user.image ? (
-                          <img src={user.image} alt={user.name!} className="w-10 h-10 rounded-sm object-cover border border-[#2B2B2B]" />
+                          <img
+                            src={user.image}
+                            alt={user.name!}
+                            className="w-10 h-10 rounded-full object-cover border border-white/10"
+                          />
                         ) : (
-                          <div className="w-10 h-10 rounded-sm bg-[#E50914]/10 text-[#E50914] flex items-center justify-center font-bold border border-[#E50914]/20">
+                          <div className="w-10 h-10 rounded-full bg-white/[0.06] border border-white/10 flex items-center justify-center font-medium text-sm text-white">
                             {user.name ? user.name.charAt(0).toUpperCase() : "U"}
                           </div>
                         )}
-                        <span className="font-medium text-white">{user.name || "Unknown"}</span>
+                        <span className="font-medium text-white">
+                          {user.name || "Unknown"}
+                        </span>
                       </div>
                     </td>
-                    <td className="px-6 py-4 text-gray-300">
-                      {user.email || "No Email"}
+                    <td className="px-6 py-4 text-white/70 text-sm">
+                      {user.email || "No email"}
                     </td>
-                    <td className="px-6 py-4 text-gray-300">
-                      <div className="flex items-center gap-2">
-                        <Calendar className="w-4 h-4 text-gray-500" />
-                        {user.createdAt ? new Date(user.createdAt).toLocaleDateString() : "Unknown"}
+                    <td className="px-6 py-4 text-white/70 text-sm">
+                      <div className="inline-flex items-center gap-2">
+                        <Calendar className="w-3.5 h-3.5 text-white/45" />
+                        {user.createdAt
+                          ? new Date(user.createdAt).toLocaleDateString()
+                          : "—"}
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <span className={`px-2.5 py-1 rounded-sm text-[10px] font-black uppercase tracking-widest ${
-                        user.role === UserRole.ADMIN ? 'bg-[#E50914]/20 text-[#E50914] border border-[#E50914]/30' : 'bg-gray-800 text-gray-300 border border-gray-700'
-                      }`}>
+                      <span
+                        className={`px-3 py-1 rounded-full text-[10px] tracking-[0.25em] uppercase ${
+                          user.role === UserRole.ADMIN
+                            ? "bg-white text-[#121315] font-medium"
+                            : "bg-white/[0.06] text-white/80 border border-white/10"
+                        }`}
+                      >
                         {user.role || UserRole.USER}
                       </span>
                     </td>
@@ -86,4 +124,4 @@ export default async function UsersPage() {
       </div>
     </div>
   );
-}
+}

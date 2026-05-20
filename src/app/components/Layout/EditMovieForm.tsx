@@ -1,6 +1,18 @@
-'use client'
+"use client";
+
 import { moviesRoute } from "@/src/app/components/service/movie";
-import { Clapperboard, Calendar, Users, ListVideo, Link as LinkIcon, DollarSign, Loader2 } from "lucide-react";
+import {
+  Clapperboard,
+  Calendar,
+  Users,
+  ListVideo,
+  Link as LinkIcon,
+  DollarSign,
+  Loader2,
+  Type,
+  FileText,
+  ArrowUpRight,
+} from "lucide-react";
 import { toast } from "sonner";
 import { useEffect, useState } from "react";
 import { MOVIE } from "../types/movies.type";
@@ -10,6 +22,7 @@ export default function EditMovieForm({ id }: { id: string }) {
   const [movieData, setMovieData] = useState<MOVIE | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [posterUrl, setPosterUrl] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     const fetchMovie = async () => {
@@ -18,9 +31,7 @@ export default function EditMovieForm({ id }: { id: string }) {
         const response = await moviesRoute.getSingleMovies(id);
         const data = response.data || response;
         setMovieData(data);
-        if (data.posterUrl) {
-          setPosterUrl(data.posterUrl);
-        }
+        if (data.posterUrl) setPosterUrl(data.posterUrl);
       } catch (error: any) {
         console.error("Failed to fetch movie:", error);
         toast.error("Failed to load movie details");
@@ -28,10 +39,7 @@ export default function EditMovieForm({ id }: { id: string }) {
         setIsLoading(false);
       }
     };
-
-    if (id) {
-      fetchMovie();
-    }
+    if (id) fetchMovie();
   }, [id]);
 
   async function editMovieAction(e: any) {
@@ -61,171 +69,187 @@ export default function EditMovieForm({ id }: { id: string }) {
       trailerUrl,
     } as MOVIE;
 
+    setSubmitting(true);
     try {
-      const response = await moviesRoute.updateMovies(id, payload);
-      console.log(response);
-      toast.success("Movie updated successfully");
+      await moviesRoute.updateMovies(id, payload);
+      toast.success("Film updated");
     } catch (error: any) {
       console.error("Update movie error:", error);
-      toast.error(error.response?.data?.message || error.message || "Failed to update movie");
+      toast.error(
+        error.response?.data?.message ||
+          error.message ||
+          "Failed to update film",
+      );
+    } finally {
+      setSubmitting(false);
     }
   }
 
   if (isLoading) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[400px] space-y-4">
-        <Loader2 className="w-12 h-12 text-[#E50914] animate-spin" />
-        <p className="text-gray-500 font-medium">Loading movie details...</p>
+      <div className="flex flex-col items-center justify-center min-h-[400px] gap-4 text-white/55">
+        <Loader2 className="w-6 h-6 animate-spin text-white" />
+        <p className="text-[10px] tracking-[0.4em] uppercase">
+          Loading film details
+        </p>
       </div>
     );
   }
 
   if (!movieData) {
     return (
-      <div className="text-center p-12 bg-white rounded-md border border-gray-200">
-        <p className="text-red-500 font-medium text-lg">Movie not found</p>
+      <div className="rounded-3xl bg-[#23262B] border border-white/8 p-12 text-center">
+        <p className="text-white font-medium">Film not found</p>
       </div>
     );
   }
 
   return (
-    <div className="bg-[#141414] border border-[#2B2B2B] rounded-sm p-6 sm:p-8 shadow-sm w-full max-w-4xl mx-auto text-white">
-      <div className="mb-8">
-        <h2 className="text-2xl font-bold tracking-tight text-white mb-2 flex items-center gap-2">
-          <Clapperboard className="w-6 h-6 text-[#E50914]" />
-          EDIT YOUR MOVIE
-        </h2>
-        <p className="text-gray-400">Update the details for "{movieData.title}"</p>
+    <div>
+      <div className="mb-7">
+        <p className="text-[11px] tracking-[0.45em] uppercase text-white/50 mb-3 flex items-center gap-2">
+          <Clapperboard className="w-3.5 h-3.5" />
+          Editing
+        </p>
+        <h1
+          className="text-white font-light leading-[1] tracking-tight"
+          style={{ fontSize: "clamp(1.6rem, 3vw, 2.4rem)" }}
+        >
+          Update{" "}
+          <span className="italic font-serif text-white/80">
+            “{movieData.title}.”
+          </span>
+        </h1>
       </div>
 
-      <form onSubmit={editMovieAction} className="space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Title */}
-          <div className="space-y-2 md:col-span-2">
-            <label className="text-sm font-medium text-gray-300">Movie Title</label>
+      <form
+        onSubmit={editMovieAction}
+        className="rounded-[2rem] bg-[#23262B] border border-white/8 p-6 sm:p-10 luxury-shadow text-white"
+      >
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <Field icon={<Type className="w-4 h-4" />} label="Title" full>
             <input
               name="title"
               required
               defaultValue={movieData.title}
-              placeholder="Inception"
-              className="w-full px-3 py-2 bg-[#000000] border border-[#2B2B2B] text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-[#E50914] focus:border-transparent rounded-sm text-lg"
+              className="w-full pl-11 pr-4 py-3 bg-[#121315] border border-white/8 rounded-2xl text-white text-base placeholder:text-white/35 focus:outline-none focus:border-white/30 transition-all"
             />
-          </div>
+          </Field>
 
-          {/* Synopsis */}
-          <div className="space-y-2 md:col-span-2">
-            <label className="text-sm font-medium text-gray-300">Synopsis</label>
+          <div className="md:col-span-2">
+            <p className="text-[10px] tracking-[0.35em] uppercase text-white/45 mb-2 flex items-center gap-2">
+              <FileText className="w-3.5 h-3.5" />
+              Synopsis
+            </p>
             <textarea
               name="synopsis"
               defaultValue={movieData.synopsis || ""}
-              placeholder="A brief description of the movie..."
-              className="w-full bg-[#000000] border border-[#2B2B2B] text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-[#E50914] rounded-sm p-3 min-h-[100px]"
+              className="w-full px-4 py-3 bg-[#121315] border border-white/8 rounded-2xl text-white text-sm placeholder:text-white/35 focus:outline-none focus:border-white/30 transition-all min-h-[120px] resize-none"
             />
           </div>
 
-          {/* Release Year */}
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-300 flex items-center gap-2">
-              <Calendar className="w-4 h-4 text-gray-500" /> Release Year
-            </label>
+          <Field icon={<Calendar className="w-4 h-4" />} label="Release year">
             <input
               name="releaseYear"
               type="number"
               defaultValue={movieData.releaseYear}
-              placeholder="2010"
-              className="w-full px-3 py-2 bg-[#000000] border border-[#2B2B2B] text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-[#E50914] rounded-sm"
+              className="w-full pl-11 pr-4 py-3 bg-[#121315] border border-white/8 rounded-2xl text-white text-sm placeholder:text-white/35 focus:outline-none focus:border-white/30 transition-all"
             />
-          </div>
+          </Field>
 
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-300 flex items-center gap-2">
-              <DollarSign className="w-4 h-4 text-gray-500" /> Pricing Model
-            </label>
+          <Field icon={<DollarSign className="w-4 h-4" />} label="Pricing">
             <select
               name="pricing"
               defaultValue={movieData.pricing}
-              className="w-full bg-[#000000] border border-[#2B2B2B] text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-[#E50914] rounded-sm p-2.5 cursor-pointer hover:bg-[#2B2B2B]"
+              className="w-full pl-11 pr-4 py-3 bg-[#121315] border border-white/8 rounded-2xl text-white text-sm focus:outline-none focus:border-white/30 transition-all appearance-none cursor-pointer"
             >
-              <option value="FREE">Free Tier</option>
-              <option value="PREMIUM">Premium / Paid</option>
+              <option value="FREE">Free tier</option>
+              <option value="PREMIUM">Premium / paid</option>
             </select>
-          </div>
+          </Field>
 
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-300 flex items-center gap-2">
-              <Users className="w-4 h-4 text-gray-500" /> Director
-            </label>
+          <Field icon={<Users className="w-4 h-4" />} label="Director">
             <input
               name="director"
               defaultValue={movieData.director}
-              placeholder="Christopher Nolan"
-              className="w-full px-3 py-2 bg-[#000000] border border-[#2B2B2B] text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-[#E50914] rounded-sm"
+              className="w-full pl-11 pr-4 py-3 bg-[#121315] border border-white/8 rounded-2xl text-white text-sm placeholder:text-white/35 focus:outline-none focus:border-white/30 transition-all"
             />
-          </div>
+          </Field>
 
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-300 flex items-center gap-2">
-              <Users className="w-4 h-4 text-gray-500" /> Cast
-            </label>
+          <Field icon={<Users className="w-4 h-4" />} label="Cast">
             <input
               name="cast"
               defaultValue={movieData.cast || ""}
-              placeholder="Leonardo DiCaprio, Joseph Gordon-Levitt..."
-              className="w-full px-3 py-2 bg-[#000000] border border-[#2B2B2B] text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-[#E50914] rounded-sm"
+              className="w-full pl-11 pr-4 py-3 bg-[#121315] border border-white/8 rounded-2xl text-white text-sm placeholder:text-white/35 focus:outline-none focus:border-white/30 transition-all"
             />
-          </div>
+          </Field>
 
-          <div className="space-y-2 md:col-span-2">
-            <label className="text-sm font-medium text-gray-300 flex items-center gap-2">
-              <ListVideo className="w-4 h-4 text-gray-500" /> Streaming Platforms
-            </label>
+          <Field
+            icon={<ListVideo className="w-4 h-4" />}
+            label="Streaming platforms"
+            full
+          >
             <input
               name="streamingPlatforms"
               required
               defaultValue={movieData.streamingPlatforms?.join(", ")}
-              placeholder="Netflix, Hulu, Amazon Prime (comma separated)"
-              className="w-full px-3 py-2 bg-[#000000] border border-[#2B2B2B] text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-[#E50914] rounded-sm"
+              className="w-full pl-11 pr-4 py-3 bg-[#121315] border border-white/8 rounded-2xl text-white text-sm placeholder:text-white/35 focus:outline-none focus:border-white/30 transition-all"
             />
-          </div>
+          </Field>
 
-          {/* Poster Upload */}
-          <div className="space-y-2 md:col-span-2">
-            <CloudinaryUpload 
-              label="Movie Poster Cover" 
-              onUploadSuccess={(url) => setPosterUrl(url)} 
+          <div className="md:col-span-2">
+            <CloudinaryUpload
+              label="Movie poster"
+              onUploadSuccess={(url) => setPosterUrl(url)}
             />
             {posterUrl && (
-              <div className="mt-2">
-                <p className="text-[10px] text-gray-500 font-mono mb-2 truncate">
-                  Current: {posterUrl}
-                </p>
-                <div className="w-24 h-36 rounded border border-[#2B2B2B] overflow-hidden">
-                   <img src={posterUrl} alt="Poster preview" className="w-full h-full object-cover" />
+              <div className="mt-3 flex items-center gap-3">
+                <div className="w-20 h-28 rounded-xl border border-white/10 overflow-hidden shrink-0">
+                  <img
+                    src={posterUrl}
+                    alt="Poster preview"
+                    className="w-full h-full object-cover"
+                  />
                 </div>
+                <p className="text-[10px] text-white/40 font-mono truncate">
+                  {posterUrl}
+                </p>
               </div>
             )}
           </div>
 
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-300 flex items-center gap-2">
-              <LinkIcon className="w-4 h-4 text-gray-500" /> Trailer Video URL
-            </label>
+          <Field
+            icon={<LinkIcon className="w-4 h-4" />}
+            label="Trailer URL"
+            full
+          >
             <input
               name="trailerUrl"
               defaultValue={movieData.trailerUrl || ""}
-              placeholder="https://youtube.com/watch?v=..."
-              className="w-full px-3 py-2 bg-[#000000] border border-[#2B2B2B] text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-[#E50914] rounded-sm"
+              className="w-full pl-11 pr-4 py-3 bg-[#121315] border border-white/8 rounded-2xl text-white text-sm placeholder:text-white/35 focus:outline-none focus:border-white/30 transition-all"
             />
-          </div>
+          </Field>
         </div>
 
-        {/* Submit */}
-        <div className="pt-4 mt-8 border-t border-[#2B2B2B]">
+        <div className="pt-7 mt-7 border-t border-white/8 flex flex-wrap items-center justify-end gap-3">
           <button
             type="submit"
-            className="w-full md:w-auto md:px-12 bg-[#E50914] hover:bg-red-700 text-white font-medium py-3 rounded-sm transition-colors flex justify-center items-center ml-auto"
+            disabled={submitting}
+            className="group inline-flex items-center gap-2.5 pl-6 pr-2 py-2 rounded-full bg-white text-[#121315] text-sm font-medium hover:scale-[1.02] disabled:opacity-60 disabled:cursor-not-allowed transition-transform shadow-[0_10px_24px_-8px_rgba(255,255,255,0.25)]"
           >
-            Update Movie details
+            {submitting ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin" />
+                Saving…
+              </>
+            ) : (
+              <>
+                Save changes
+                <span className="w-9 h-9 rounded-full bg-[#121315] text-white flex items-center justify-center group-hover:rotate-45 transition-transform duration-300">
+                  <ArrowUpRight className="w-4 h-4" />
+                </span>
+              </>
+            )}
           </button>
         </div>
       </form>
@@ -233,4 +257,29 @@ export default function EditMovieForm({ id }: { id: string }) {
   );
 }
 
-
+function Field({
+  icon,
+  label,
+  full = false,
+  children,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  full?: boolean;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className={full ? "md:col-span-2" : ""}>
+      <p className="text-[10px] tracking-[0.35em] uppercase text-white/45 mb-2 flex items-center gap-2">
+        {icon}
+        {label}
+      </p>
+      <div className="relative">
+        <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-white/45">
+          {icon}
+        </span>
+        {children}
+      </div>
+    </div>
+  );
+}

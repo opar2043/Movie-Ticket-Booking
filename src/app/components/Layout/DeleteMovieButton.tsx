@@ -12,35 +12,42 @@ interface DeleteMovieButtonProps {
   movieTitle: string;
 }
 
-export default function DeleteMovieButton({ id, movieTitle }: DeleteMovieButtonProps) {
+export default function DeleteMovieButton({
+  id,
+  movieTitle,
+}: DeleteMovieButtonProps) {
   const [isDeleting, setIsDeleting] = useState(false);
   const router = useRouter();
 
   const handleDelete = async () => {
     const result = await Swal.fire({
-      title: "Are you sure?",
-      text: `Do you want to delete "${movieTitle}"? This action cannot be undone.`,
+      title: "Delete this film?",
+      text: `“${movieTitle}” will be removed permanently.`,
       icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: "#E50914",
-      cancelButtonColor: "#2B2B2B",
-      confirmButtonText: "Yes, delete it!",
-      background: "#141414",
-      color: "#141414"
+      confirmButtonColor: "#FEFEFE",
+      cancelButtonColor: "#23262B",
+      confirmButtonText: "Yes, delete",
+      cancelButtonText: "Cancel",
+      background: "#23262B",
+      color: "#ffffff",
     });
 
     if (!result.isConfirmed) return;
 
     setIsDeleting(true);
-    const toastId = toast.loading(`Deleting "${movieTitle}"...`);
+    const toastId = toast.loading(`Deleting “${movieTitle}”…`);
 
     try {
       await moviesRoute.deleteMovies(id);
-      toast.success(`"${movieTitle}" deleted successfully`, { id: toastId });
+      toast.success(`“${movieTitle}” removed`, { id: toastId });
       router.refresh();
     } catch (error: any) {
       console.error("Delete error:", error);
-      toast.error(error.response?.data?.message || `Failed to delete "${movieTitle}"`, { id: toastId });
+      toast.error(
+        error.response?.data?.message || `Failed to delete “${movieTitle}”`,
+        { id: toastId },
+      );
     } finally {
       setIsDeleting(false);
     }
@@ -50,8 +57,8 @@ export default function DeleteMovieButton({ id, movieTitle }: DeleteMovieButtonP
     <button
       onClick={handleDelete}
       disabled={isDeleting}
-      className="p-2 text-gray-400 hover:text-[#E50914] hover:bg-[#2B2B2B] rounded-sm transition-colors disabled:opacity-50"
-      title="Delete Movie"
+      className="w-9 h-9 rounded-full border border-white/10 bg-white/[0.04] text-white/70 hover:text-white hover:bg-white/[0.08] flex items-center justify-center transition-all disabled:opacity-50"
+      title="Delete film"
     >
       {isDeleting ? (
         <Loader2 className="w-4 h-4 animate-spin" />

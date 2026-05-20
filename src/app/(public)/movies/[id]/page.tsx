@@ -3,7 +3,20 @@ import ReviewSlider from "@/src/app/components/Layout/ReviewSlider";
 import { moviesRoute } from "@/src/app/components/service/movie";
 import Image from "next/image";
 import Link from "next/link";
-import { Clapperboard, Star, Video, Ticket, User, Calendar } from "lucide-react";
+import {
+  Star,
+  Video,
+  Ticket,
+  User,
+  Calendar,
+  Heart,
+  Share2,
+  Clock,
+  Globe,
+  ArrowUpRight,
+  ChevronRight,
+  Fullscreen,
+} from "lucide-react";
 
 export default async function ViewMovie({
   params,
@@ -13,119 +26,155 @@ export default async function ViewMovie({
   const { id } = await params;
   const movieData = await moviesRoute.getSingleMovies(id);
   const movie = movieData.data;
+  const isPremium = String(movie.pricing) === "PREMIUM";
+
   return (
-    <div className="min-h-screen bg-[#000000] pb-20">
-
-      {/* Hero */}
-      <div className="bg-[#141414] border-b border-[#2B2B2B]">
-        <div className="max-w-6xl mx-auto px-6 py-10 flex flex-col md:flex-row gap-8">
-
-          {/* Poster */}
-          <div className="w-full md:w-72 shrink-0">
-            <div className="aspect-[2/3] bg-[#2B2B2B] rounded-sm overflow-hidden border border-[#2B2B2B]">
-              {movie.posterUrl ? (
+    <main className="min-h-screen bg-[#121315] pb-24">
+      {/* CINEMATIC HERO */}
+      <section className="relative pt-2 pb-12 bg-red-700">
+        <div className="max-w-[1400px] mx-auto px-5 sm:px-8">
+          <div className="relative rounded-[2rem] overflow-hidden border border-white/8 luxury-shadow">
+            {/* Backdrop */}
+            <div className="relative h-[68vh] min-h-[560px]">
+              {movie.posterUrl && (
                 <Image
-                  width={400}
-                  height={600}
-                  src={movie.posterUrl}
-                  alt={movie.title}
-                  className="w-full h-full object-cover transition-transform hover:scale-105 duration-300"
+                  src={movie.posterUrl || "https://i.ibb.co.com/hJVWhyW1/mv1.jpg"}
+                  alt=""
+                  width={1800}
+                  height={900}
+                  className="absolute inset-0 w-full h-full object-cover scale-110 blur-[2px] opacity-50"
                 />
-              ) : (
-                <div className="w-full h-full flex flex-col items-center justify-center text-gray-500 gap-2">
-                  <Clapperboard className="w-12 h-12" />
-                  <p className="text-sm font-medium">No poster available</p>
-                </div>
               )}
-            </div>
-          </div>
+              <div className="absolute inset-0 bg-gradient-to-r from-[#121315] via-[#121315]/85 to-[#121315]/30" />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#121315] via-transparent to-transparent" />
 
-          {/* Details */}
-          <div className="flex flex-col gap-5 grow">
-
-            {/* Access badge + title */}
-            <div className="flex flex-col gap-2">
-              <span
-                className={`w-fit px-3 py-1 rounded-sm text-[10px] font-semibold tracking-widest uppercase ${
-                  movie.pricing === "FREE"
-                    ? "bg-[#2B2B2B] text-gray-300 border border-[#2B2B2B]"
-                    : "bg-[#E50914]/20 text-[#E50914] border border-[#E50914]/20"
-                }`}
-              >
-                {movie.pricing} Access
-              </span>
-              <h1 className="text-3xl md:text-5xl font-semibold text-white tracking-tight leading-tight">
-                {movie.title}
-              </h1>
-            </div>
-
-            {/* Meta */}
-            <div className="flex flex-wrap gap-4">
-              <div className="flex items-center gap-2 text-sm text-gray-400">
-                <div className="w-7 h-7 rounded-sm bg-[#2B2B2B] flex items-center justify-center">
-                  <User className="w-3.5 h-3.5 text-gray-500" />
+              {/* Content grid */}
+              <div className="relative h-full grid lg:grid-cols-12 gap-8 px-6 sm:px-10 lg:px-14 py-2">
+                {/* Poster card */}
+                <div className="lg:col-span-4 flex items-center">
+                  <div className="relative w-full max-w-[340px] aspect-[2/3] rounded-3xl overflow-hidden border border-white/10 luxury-shadow group">
+                    <Image
+                      src={movie.posterUrl || "https://i.ibb.co.com/hJVWhyW1/mv1.jpg"}
+                      width={500}
+                      height={750}
+                      alt={movie.title}
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#121315]/60 via-transparent to-transparent" />
+                  </div>
                 </div>
-                <span>Dir. <span className="font-medium text-white">{movie.director}</span></span>
-              </div>
-              <div className="flex items-center gap-2 text-sm text-gray-400">
-                <div className="w-7 h-7 rounded-sm bg-[#2B2B2B] flex items-center justify-center">
-                  <Calendar className="w-3.5 h-3.5 text-gray-500" />
-                </div>
-                <span className="font-medium text-white">{movie.releaseYear}</span>
-              </div>
-            </div>
 
-            {/* Synopsis */}
-            <p className="text-gray-400 text-base leading-relaxed max-w-2xl">
-              {movie.synopsis || "No description available for this title."}
-            </p>
-
-            {/* Platforms */}
-            {movie.streamingPlatforms?.length > 0 && (
-              <div className="flex flex-col gap-2">
-                <p className="text-[10px] font-semibold text-gray-500 uppercase tracking-widest">Streaming on</p>
-                <div className="flex flex-wrap gap-2">
-                  {movie.streamingPlatforms.map((platform: string, i: number) => (
-                    <span
-                      key={i}
-                      className="bg-[#2B2B2B] border border-[#2B2B2B] text-gray-300 px-3 py-1 rounded-sm text-xs font-medium hover:border-[#E50914] hover:text-[#E50914] transition-colors cursor-default"
+                {/* Details */}
+                <div className="lg:col-span-8 flex flex-col justify-center gap-6">
+                  {/* Breadcrumb */}
+                  <nav className="flex items-center gap-1.5 text-[10px] text-white/45 tracking-[0.3em] uppercase">
+                    <Link href="/" className="hover:text-white transition-colors">
+                      Home
+                    </Link>
+                    <ChevronRight className="w-3 h-3" />
+                    <Link
+                      href="/movies"
+                      className="hover:text-white transition-colors"
                     >
-                      {platform}
+                      Films
+                    </Link>
+                    <ChevronRight className="w-3 h-3" />
+                    <span className="text-white truncate">{movie.title}</span>
+                  </nav>
+
+                  {/* Pricing chip */}
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span
+                      className={`px-3 py-1 rounded-full text-[10px] tracking-[0.3em] uppercase ${
+                        isPremium
+                          ? "bg-white text-[#121315]"
+                          : "bg-white/[0.06] text-white/80 border border-white/10"
+                      }`}
+                    >
+                      {String(movie.pricing)} access
                     </span>
-                  ))}
+                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-white/[0.06] border border-white/10 text-white text-[10px] tracking-wider uppercase">
+                      <Star className="w-3 h-3 fill-white" />
+                      HD · 4K
+                    </span>
+                  </div>
+
+                  <h1
+                    className="text-white font-light leading-[0.95] tracking-tight"
+                    style={{ fontSize: "clamp(2.5rem, 6vw, 5rem)" }}
+                  >
+                    {movie.title}
+                  </h1>
+
+                  {/* Meta */}
+                  <div className="flex flex-wrap gap-4 items-center text-sm text-white/65">
+                    <Meta icon={<User className="w-3.5 h-3.5" />} label="Director" value={movie.director} />
+                    <span className="w-1 h-1 rounded-full bg-white/20" />
+                    <Meta icon={<Calendar className="w-3.5 h-3.5" />} label="Year" value={String(movie.releaseYear)} />
+                    <span className="w-1 h-1 rounded-full bg-white/20" />
+                    <Meta icon={<Clock className="w-3.5 h-3.5" />} label="Runtime" value="2h 18m" />
+                    <span className="w-1 h-1 rounded-full bg-white/20" />
+                    <Meta icon={<Globe className="w-3.5 h-3.5" />} label="Lang" value="EN · ES" />
+                  </div>
+
+                  <p className="text-white/70 text-base leading-relaxed max-w-2xl">
+                    {movie.synopsis || "A new cinematic story — coming soon."}
+                  </p>
+
+                  {movie.streamingPlatforms?.length > 0 && (
+                    <div>
+                      <p className="text-[10px] text-white/45 tracking-[0.35em] uppercase mb-2">
+                        Streaming on
+                      </p>
+                      <div className="flex flex-wrap gap-2">
+                        {movie.streamingPlatforms.map(
+                          (platform: string, i: number) => (
+                            <span
+                              key={i}
+                              className="px-3 py-1.5 rounded-full bg-white/[0.04] border border-white/10 text-white/75 text-xs hover:text-white hover:border-white/20 transition-colors"
+                            >
+                              {platform}
+                            </span>
+                          ),
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="flex flex-wrap gap-3 mt-3">
+                    <Link
+                      href={`/checkout?movie=${id}`}
+                      className="group inline-flex items-center gap-2.5 pl-6 pr-2 py-2 rounded-full bg-white text-[#121315] text-sm font-medium hover:scale-[1.02] transition-transform shadow-[0_14px_30px_-8px_rgba(255,255,255,0.25)]"
+                    >
+                      <Ticket className="w-4 h-4" />
+                      Book ticket
+                      <span className="w-9 h-9 rounded-full bg-[#121315] text-white flex items-center justify-center group-hover:rotate-45 transition-transform duration-300">
+                        <ArrowUpRight className="w-4 h-4" />
+                      </span>
+                    </Link>
+                    <ReviewModal movieId={id} />
+
+                  </div>
                 </div>
               </div>
-            )}
-
-            {/* Actions */}
-            <div className="flex flex-wrap gap-3 pt-4 border-t border-[#2B2B2B] mt-auto">
-              <Link href={`/checkout?movie=${id}`} className="inline-flex items-center gap-2 bg-[#E50914] hover:bg-red-700 text-white px-6 py-2.5 rounded-sm text-base font-semibold transition-all active:scale-95">
-                <Ticket className="w-5 h-5" />
-                Book ticket
-              </Link>
-              <ReviewModal movieId={id} />
             </div>
           </div>
         </div>
-      </div>
+      </section>
 
-      <div className="max-w-6xl mx-auto px-6 mt-10 space-y-14">
-
-        {/* Trailer */}
+      {/* TRAILER + REVIEWS */}
+      <div className="max-w-[1400px]  mx-auto px-5 sm:px-8 mt-8 space-y-20">
         {movie.trailerUrl && (
-          <section className="">
-            <div className="flex items-center gap-3 mb-5">
-              <div className="w-9 h-9 bg-[#E50914] rounded-sm flex items-center justify-center">
-                <Video className="w-4 h-4 text-white" />
-              </div>
-              <div>
-                <h2 className="text-lg font-semibold text-white">Official trailer</h2>
-                <p className="text-sm text-gray-400">Experience the thrill before watching</p>
-              </div>
-            </div>
-            <div className="rounded-sm overflow-hidden border border-[#2B2B2B] bg-[#141414] aspect-video">
+          <section id="trailer">
+            <SectionHeader
+              icon={<Video className="w-4 h-4" />}
+              eyebrow="Watch now"
+              title="Official trailer"
+            />
+            <div className="rounded-2xl  overflow-hidden border border-white/8 bg-[#23262B] aspect-video luxury-shadow ">
               <iframe
                 src={movie.trailerUrl}
+                width={100}
                 className="w-full h-full"
                 allowFullScreen
               />
@@ -133,20 +182,69 @@ export default async function ViewMovie({
           </section>
         )}
 
-        {/* Reviews */}
         <section>
-          <div className="flex items-center gap-3 mb-5">
-            <div className="w-9 h-9 bg-[#141414] border border-[#2B2B2B] rounded-sm flex items-center justify-center">
-              <Star className="w-4 h-4 text-yellow-500" />
-            </div>
-            <div>
-              <h2 className="text-lg font-semibold text-white">Audience reviews</h2>
-              <p className="text-sm text-gray-400">What other movie enthusiasts are saying</p>
-            </div>
-          </div>
+          <SectionHeader
+            icon={<Star className="w-4 h-4" />}
+            eyebrow="Community"
+            title="Audience letters"
+          />
           <ReviewSlider movieId={id} />
         </section>
+      </div>
+    </main>
+  );
+}
 
+function Meta({
+  icon,
+  label,
+  value,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  value: string;
+}) {
+  return (
+    <span className="inline-flex items-center gap-2">
+      <span className="w-7 h-7 rounded-full bg-white/[0.04] border border-white/10 flex items-center justify-center text-white/70">
+        {icon}
+      </span>
+      <span>
+        <span className="block text-[10px] tracking-[0.3em] uppercase text-white/45">
+          {label}
+        </span>
+        <span className="block text-white font-medium text-sm leading-none">
+          {value}
+        </span>
+      </span>
+    </span>
+  );
+}
+
+function SectionHeader({
+  icon,
+  eyebrow,
+  title,
+}: {
+  icon: React.ReactNode;
+  eyebrow: string;
+  title: string;
+}) {
+  return (
+    <div className="flex items-center gap-3 mb-6">
+      <div className="w-11 h-11 rounded-full bg-white/[0.06] border border-white/10 flex items-center justify-center text-white">
+        {icon}
+      </div>
+      <div>
+        <p className="text-[10px] text-white/45 tracking-[0.35em] uppercase">
+          {eyebrow}
+        </p>
+        <h2
+          className="text-white font-light tracking-tight"
+          style={{ fontSize: "1.6rem" }}
+        >
+          {title}
+        </h2>
       </div>
     </div>
   );

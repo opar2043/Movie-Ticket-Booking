@@ -1,165 +1,138 @@
 "use client";
 
 import React from "react";
-import { Film, Trophy, Clapperboard } from "lucide-react";
+import { motion } from "framer-motion";
+import { Trophy, Clapperboard, ArrowUpRight } from "lucide-react";
 
 const features = [
   {
-    icon: <Trophy className="w-5 h-5" />,
-    title: "Unlimited Awards",
-    desc: "We've designed a culture that allows our stewards to assimilate.",
+    icon: <Trophy className="w-4 h-4" />,
+    title: "Award-winning curation",
+    desc: "A small editorial team obsessed with cinema — every film handpicked, every recommendation considered.",
   },
   {
-    icon: <Clapperboard className="w-5 h-5" />,
-    title: "Our Directors",
-    desc: "We've designed a culture that allows our stewards to assimilate.",
+    icon: <Clapperboard className="w-4 h-4" />,
+    title: "Studio-grade design",
+    desc: "Crafted with the same attention as a film's title sequence — every screen art-directed to feel premium.",
   },
 ];
 
 export default function GetToKnowUs() {
   return (
-    <section className="relative py-20 px-4 sm:px-8 bg-[#141414] overflow-hidden">
-      {/* Dot pattern — top right */}
-      <div
-        className="absolute right-0 top-0 w-64 h-64 opacity-[0.07] pointer-events-none"
-        style={{
-          backgroundImage:
-            "radial-gradient(circle, #E50914 1.5px, transparent 1.5px)",
-          backgroundSize: "18px 18px",
-        }}
-      />
-      {/* Dot pattern — bottom left */}
-      <div
-        className="absolute left-32 bottom-0 w-48 h-48 opacity-[0.07] pointer-events-none"
-        style={{
-          backgroundImage:
-            "radial-gradient(circle, #E50914 1.5px, transparent 1.5px)",
-          backgroundSize: "18px 18px",
-        }}
-      />
+    <section className="relative py-24 sm:py-32">
+      <div className="max-w-[1400px] mx-auto px-5 sm:px-8">
+        <div className="grid lg:grid-cols-12 gap-10 lg:gap-16 items-center">
+          {/* Image collage */}
+          <div className="relative lg:col-span-6 h-[520px]">
+            <motion.div
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-80px" }}
+              transition={{ duration: 0.8, ease: "easeOut" }}
+              className="absolute left-0 top-0 w-[60%] h-[380px] rounded-3xl overflow-hidden border border-white/8 luxury-shadow"
+            >
+              <img
+                src="https://images.unsplash.com/photo-1485846234645-a62644f84728?w=900&q=80"
+                alt="cinema"
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#121315]/40 to-transparent" />
+            </motion.div>
 
-      <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center">
-        {/* ── LEFT: Images ── */}
-        <div className="relative h-[420px] hidden md:flex items-center">
-          {/* Film reel ghost */}
-          <svg
-            className="absolute left-0 bottom-6 w-36 h-36 text-slate-200"
-            viewBox="0 0 100 100"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.5"
-          >
-            <circle cx="50" cy="50" r="46" />
-            <circle cx="50" cy="50" r="18" />
-            <circle cx="50" cy="22" r="6" />
-            <circle cx="50" cy="78" r="6" />
-            <circle cx="22" cy="50" r="6" />
-            <circle cx="78" cy="50" r="6" />
-          </svg>
+            <motion.div
+              initial={{ opacity: 0, y: 60 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-80px" }}
+              transition={{ duration: 0.9, ease: "easeOut", delay: 0.15 }}
+              className="absolute right-0 bottom-0 w-[58%] h-[340px] rounded-3xl overflow-hidden border border-white/8 luxury-shadow"
+            >
+              <img
+                src="https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=900&q=80"
+                alt="reel"
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#121315]/30 to-transparent" />
+            </motion.div>
 
-          {/* Photo 1 — back left, rotated */}
-          <div className="absolute left-6 top-4 w-48 h-[280px] rounded-2xl overflow-hidden shadow-lg -rotate-3 border-4 border-white z-0">
-            <img
-              src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&q=80"
-              alt="scene"
-              className="w-full h-full object-cover"
-            />
+            {/* Floating stat card */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, ease: "easeOut", delay: 0.4 }}
+              className="absolute left-[42%] top-[44%] glass-strong rounded-2xl px-5 py-4 shadow-2xl"
+            >
+              <p
+                className="text-white font-light tracking-tight leading-none"
+                style={{ fontSize: "3rem" }}
+              >
+                20
+              </p>
+              <p className="text-[10px] text-white/60 tracking-[0.3em] uppercase mt-1">
+                Years of cinema
+              </p>
+            </motion.div>
           </div>
 
-          {/* Photo 2 — front right, rotated other way */}
-          <div className="absolute left-44 top-10 w-44 h-[260px] rounded-2xl overflow-hidden shadow-xl rotate-3 border-4 border-white z-10">
-            <img
-              src="https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=400&q=80"
-              alt="movie"
-              className="w-full h-full object-cover"
-            />
-          </div>
-
-          {/* 20 Years badge */}
-          <div className="absolute left-28 bottom-4 z-20 bg-[#000000] border border-[#2B2B2B] rounded-sm shadow-xl px-5 py-4">
-            <p className="text-5xl font-black text-[#E50914] leading-none">20</p>
-            <p className="text-gray-400 text-xs font-medium mt-1 leading-tight">
-              Years of
-              <br />
-              Producing
+          {/* Content */}
+          <div className="lg:col-span-6">
+            <p className="text-[11px] tracking-[0.45em] uppercase text-white/50 mb-5">
+              The studio · 03
             </p>
-          </div>
+            <h2
+              className="text-white font-light leading-[0.98] tracking-tight"
+              style={{ fontSize: "clamp(2.25rem, 5vw, 4rem)" }}
+            >
+              We build the{" "}
+              <span className="italic font-serif text-white/80">
+                quietest, most cinematic
+              </span>{" "}
+              way to experience film.
+            </h2>
+            <p className="text-white/60 mt-6 text-[15px] leading-relaxed max-w-lg">
+              Movies OK is a small atelier of cinephiles, designers and
+              engineers. We sweat the title cards, the timing of a fade, the
+              feel of a checkout — because cinema deserves software with the same
+              craft.
+            </p>
 
-          {/* Dashed arrow */}
-          <svg
-            className="absolute bottom-2 left-4 w-24 h-14 text-[#E50914]"
-            viewBox="0 0 90 45"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            strokeDasharray="5 4"
-          >
-            <path d="M5 40 Q35 5 80 22" />
-            <polyline
-              points="72,15 80,22 72,29"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.5"
-            />
-          </svg>
-        </div>
-
-        {/* ── RIGHT: Content ── */}
-        <div>
-          {/* Label */}
-          <div className="flex items-center gap-2 mb-3">
-            <Film className="w-5 h-5 text-[#E50914]" />
-            <span className="text-[#E50914] text-sm font-semibold tracking-widest uppercase">
-              Get To Know Us
-            </span>
-          </div>
-
-          {/* Heading */}
-          <h2 className="text-white font-black text-4xl sm:text-5xl leading-tight mb-5">
-            The Best Movie Ticket
-            <br />
-            Distributor
-          </h2>
-
-          {/* Body */}
-          <p className="text-gray-400 text-base leading-relaxed mb-8">
-            Lorem ipsum dolor sit amet consectur adipiscing elit sed eiusmod
-            tempor incididunt labore dolore magna aliquaenim ad minim. Sed risus
-            augue, commodo ornare felis non, eleifend pharetra eleifend.
-          </p>
-
-          {/* Feature list */}
-          <div className="flex flex-col gap-5 mb-8">
-            {features.map((f) => (
-              <div key={f.title} className="flex gap-4 items-start">
-                <div className="shrink-0 w-12 h-12 rounded-sm bg-[#E50914]/20 text-[#E50914] flex items-center justify-center border border-[#E50914]/30">
-                  {f.icon}
-                </div>
-                <div>
-                  <p className="font-bold text-white text-sm">{f.title}</p>
-                  <p className="text-gray-400 text-sm leading-relaxed mt-0.5">
+            <div className="mt-10 grid sm:grid-cols-2 gap-4">
+              {features.map((f) => (
+                <div
+                  key={f.title}
+                  className="rounded-2xl bg-[#23262B] border border-white/8 p-5"
+                >
+                  <div className="w-10 h-10 rounded-full bg-white/[0.06] border border-white/10 flex items-center justify-center text-white mb-4">
+                    {f.icon}
+                  </div>
+                  <p className="text-white font-medium text-[15px] mb-1.5">
+                    {f.title}
+                  </p>
+                  <p className="text-white/55 text-sm leading-relaxed">
                     {f.desc}
                   </p>
                 </div>
+              ))}
+            </div>
+
+            <div className="mt-10 flex items-center gap-4">
+              <button className="group inline-flex items-center gap-2.5 pl-6 pr-2 py-2 rounded-full bg-white text-[#121315] text-sm font-medium hover:scale-[1.02] transition-transform shadow-[0_14px_30px_-8px_rgba(255,255,255,0.2)]">
+                About the Studio
+                <span className="w-9 h-9 rounded-full bg-[#121315] text-white flex items-center justify-center group-hover:rotate-45 transition-transform duration-300">
+                  <ArrowUpRight className="w-4 h-4" />
+                </span>
+              </button>
+
+              <div className="hidden sm:block h-10 w-px bg-white/10" />
+
+              <div className="hidden sm:block">
+                <p className="text-[10px] text-white/40 tracking-[0.35em] uppercase">
+                  Hiring
+                </p>
+                <p className="text-white font-medium text-sm mt-0.5">
+                  Open roles in design & engineering
+                </p>
               </div>
-            ))}
-          </div>
-
-          {/* CTA row */}
-          <div className="flex items-stretch gap-4 flex-wrap">
-            <button className="px-8 py-3.5 bg-[#E50914] hover:bg-red-700 text-white font-bold text-sm tracking-widest uppercase rounded-sm transition-all duration-200 shadow hover:shadow-lg hover:scale-105 active:scale-95">
-              Discover More
-            </button>
-
-            {/* Join Us card */}
-            <div className="border-l-4 border-[#E50914] bg-[#000000] px-4 py-3 rounded-r-xl">
-              <p className="text-[#E50914] text-[10px] font-bold uppercase tracking-widest mb-1">
-                Join Us
-              </p>
-              <p className="text-white font-bold text-sm leading-snug">
-                Seeking a Career in
-                <br />a Movie Production
-              </p>
             </div>
           </div>
         </div>

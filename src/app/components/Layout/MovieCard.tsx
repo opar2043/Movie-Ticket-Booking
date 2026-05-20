@@ -1,47 +1,72 @@
+"use client";
 
 import Image from "next/image";
-import { MOVIE } from "../types/movies.type";
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { motion } from "framer-motion";
+import { ArrowUpRight, Play, Star } from "lucide-react";
+import { MOVIE } from "../types/movies.type";
 
-type Props = {
-  m: MOVIE;
-};
+type Props = { m: MOVIE };
 
 export default function MovieCard({ m }: Props) {
   return (
-    <div className="bg-[#141414] border border-[#2B2B2B] rounded-sm shadow-md overflow-hidden hover:shadow-[#E50914]/20 hover:shadow-lg transition">
-      
+    <motion.div
+    //  href={`/movies/${m.id}`}
+      whileHover={{ y: -6 }}
+      transition={{ duration: 0.4, ease: "easeOut" }}
+      className="group relative overflow-hidden rounded-xl bg-[#23262B] border border-white/8 luxury-shadow"
+    >
       {/* Image */}
-      <div className="h-48 bg-[#2B2B2B]">
+      <div className="relative h-[300px] overflow-hidden">
         <Image
-          src={m.posterUrl || "/placeholder.jpg"}
+          src={m.posterUrl || "https://i.ibb.co.com/hJVWhyW1/mv1.jpg"}
           alt={m.title}
-          width={300}
-          height={400}
-          className="w-full h-full object-cover"
+          width={500}
+          height={700}
+          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.08]"
         />
-      </div>
+        <div className="absolute inset-0 bg-gradient-to-t from-[#121315] via-[#121315]/30 to-transparent" />
 
-      {/* Content */}
-      <div className="p-4">
-        <h2 className="text-lg font-bold text-white tracking-tight">{m.title}</h2>
-        <p className="text-sm text-gray-400">{m.releaseYear}</p>
+        {/* Floating chips */}
+        <span className="absolute top-4 left-4 inline-flex items-center gap-1.5 px-3 py-1 rounded-full glass text-white text-[10px] tracking-[0.25em] uppercase">
+          {m.releaseYear}
+        </span>
+        <span className="absolute top-4 right-4 inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-white text-[#121315] text-[10px] font-bold tracking-wider uppercase">
+          <Star className="w-3 h-3 fill-[#121315]" />
+          HD
+        </span>
 
-        <p className="text-sm mt-2 line-clamp-2 text-gray-300">
-          {m.synopsis || "No description available"}
-        </p>
 
-        <div className="mt-3 flex justify-between items-center">
-          <span className="text-[10px] uppercase font-bold tracking-widest bg-[#2B2B2B] text-gray-300 px-2 py-1 rounded-sm border border-[#2B2B2B]">
-            {m.pricing}
-          </span>
 
-          <Link href={`/movies/${m.id}`} className="text-sm hover:text-white hover:bg-[#E50914] cursor-pointer bg-white text-black px-3 py-1 rounded-md font-semibold flex items-center gap-2 transition-colors">
-            View <ArrowRight size={12} />
-          </Link>
+        {/* Title overlay */}
+        <div className="absolute bottom-0 left-0 right-0 p-5">
+          <p className="text-[10px] tracking-[0.4em] uppercase text-white/60 mb-1.5">
+            {m.director || "Director name not added"}
+          </p>
+          <h3 className="text-white text-xl font-medium tracking-tight line-clamp-1">
+            {m.title}
+          </h3>
         </div>
       </div>
-    </div>
+
+      {/* Footer */}
+      <div className="p-5 flex items-center justify-between border-t border-white/5">
+        <div className="min-w-0">
+          <p className="text-white/50 text-[11px] tracking-[0.3em] uppercase mb-1">
+            {String(m.pricing) === "PREMIUM" ? "Premium access" : "Open access"}
+          </p>
+          <p className="text-white/80 text-sm line-clamp-1">
+            {m.synopsis || "A new cinematic story."}
+          </p>
+        </div>
+        <Link
+          href={`/movies/${m.id}`}
+          className="ml-3 w-10 h-10 shrink-0 rounded-full bg-white text-[#121315] flex items-center justify-center group-hover:scale-110 group-hover:rotate-45 transition-transform duration-300"
+          aria-label={`View ${m.title}`}
+        >
+          <ArrowUpRight className="w-4 h-4" />
+        </Link>
+      </div>
+    </motion.div>
   );
 }
