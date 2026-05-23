@@ -9,7 +9,7 @@
 - **Live App**: [https://movies-okorg.vercel.app/](https://movies-okorg.vercel.app/)
 
 ### 🔑 Demo Admin Account
-- **Email**: `admin.movies@gmail.com`
+- **Email**: `admin.moviesok@gmail.com`
 - **Password**: `12345678`
 
 You can also self-register a regular user account from the **Sign Up** page to explore the user-side dashboard.
@@ -197,7 +197,7 @@ After cloning and running locally, verify:
 
 - [ ] Home page loads and the Navbar shows **Sign In** when logged out.
 - [ ] Register flow creates a Firebase user AND a backend user record, then redirects to `/dashboard/user/reviews`.
-- [ ] Logging in as the demo admin (`admin.movies@gmail.com`) redirects to `/dashboard/admin` and shows the admin sidebar (Movies, Users, Moderation, etc.).
+- [ ] Logging in as the demo admin (`admin.moviesok@gmail.com`) redirects to `/dashboard/admin` and shows the admin sidebar (Movies, Users, Moderation, etc.).
 - [ ] Logging in as a normal user shows only the user-side sidebar (My Reviews, Favorites).
 - [ ] Visiting `/dashboard` directly redirects based on role — never lands on a blank page.
 - [ ] Stripe checkout completes against test card `4242 4242 4242 4242`.
