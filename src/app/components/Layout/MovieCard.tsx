@@ -19,7 +19,7 @@ export default function MovieCard({ m }: Props) {
       {/* Image */}
       <div className="relative h-[300px] overflow-hidden">
         <Image
-          src={m.posterUrl || "https://i.ibb.co.com/hJVWhyW1/mv1.jpg"}
+          src={m?.posterUrl || "https://res.cloudinary.com/dd0d558xp/image/upload/v1780155045/mv2_bsvhps.jpg"}
           alt={m.title}
           width={500}
           height={700}
