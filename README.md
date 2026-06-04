@@ -7,6 +7,7 @@
 ## 🔗 Live Demo & Credentials
 
 - **Live App**: [https://movies-okorg.vercel.app/](https://movies-okorg.vercel.app/)
+- **Live App Video**: [go_to_the_video/](https://drive.google.com/file/d/1TYnTfRfLaGsD4ce9YpGTqMobxp8r_5SU/view?usp=sharing)
 
 ### 🔑 Demo Admin Account
 - **Email**: `admin.moviesok@gmail.com`
