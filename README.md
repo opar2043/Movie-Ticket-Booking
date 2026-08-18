@@ -4,6 +4,9 @@
 
 ---
 
+<img width="1358" height="642" alt="image" src="https://github.com/user-attachments/assets/cdd5dcc2-6d70-477b-8d13-33a2c0955e13" />
+
+
 ## 🔗 Live Demo & Credentials
 
 - **Live App**: [https://movies-okorg.vercel.app/](https://movies-okorg.vercel.app/)
