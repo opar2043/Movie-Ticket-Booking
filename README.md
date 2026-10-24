@@ -1,4 +1,4 @@
-# 🎬 Movies OK — Frontend
+# 🎬 Movies OK — ticket booking platform 
 
 **Movies OK** is a premium, full-stack movie streaming, review, and ticketing platform. This repository contains the **Next.js 16 frontend** — a fast, role-aware, responsive web app that lets viewers discover films, write reviews, discuss with other fans, and buy tickets through Stripe, while giving administrators a full dashboard to manage the catalog, users, transactions, and moderation queue.
 
